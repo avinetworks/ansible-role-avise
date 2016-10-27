@@ -67,6 +67,7 @@ mounts_all:
 ## Dependencies
 
 avinetworks.docker
+avinetworks.avisdk
 
 ## Example Playbook
 

@@ -1,0 +1,62 @@
+---
+# dpdk tasks file for avinetworks.avise
+
+- name: Avi SE | DPDK | Install PCI Utils | yum
+  yum: name=pciutils
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Avi SE | DPDK | Install PCI Utils | apt
+  apt: name=pciutils
+  when: ansible_pkg_mgr == 'apt'
+
+- name: Avi SE | DPDK | Install PCI Utils | dnf
+  dnf: name=pciutils
+  when: ansible_pkg_mgr == 'dnf'
+
+- name: Avi SE | DPDK | Check for supported network interface cards"
+  shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "82599|82598|X540|X710|XL710"
+  register: dpdk_test_array
+  changed_when: false
+
+- name: Avi SE | DPDK | Create destination directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /tmp/dpdk_klms
+    - /opt/avi/kmod
+
+- set_fact:
+    klm_ver: "{{ ansible_kernel | regex_replace('-.*', '') }}"
+
+- name: Avi SE | DPDK | Copy and Unarchive the DPDK KLMS
+  unarchive:
+    src: dpdk_klms.tar.gz
+    dest: /tmp/dpdk_klms
+
+- name: Avi SE | DPDK | Check that DPDK KLMS exist for the current kernel | 1/2.
+  stat:
+    path: /tmp/dpdk_klms/precompiled-klms/{{ ansible_kernel }}
+  register: ansible_kernel_dpdk_klms
+  failed_when: false
+
+- name: Avi SE | DPDK | Check that DPDK KLMS exist for the current kernel | 2/2.
+  stat:
+    path: /tmp/dpdk_klms/precompiled-klms/{{ klm_ver }}
+  when: not ansible_kernel_dpdk_klms.stat.exists
+  register: klm_ver_dpdk_klms
+  failed_when: false
+
+- name: Avi SE | DPDK | Failed to find supported DPDK KLMS for current kernel.
+  fail:
+    msg: "Could not find DPDK KLMS for {{ klm_ver }} or {{ ansible_kernel }}"
+  when: not ansible_kernel_dpdk_klms.stat.exists and not klm_ver_dpdk_klms.stat.exists
+
+- name: Avi SE | DPDK | Copy DPDK KLMS | 1/2
+  shell: cp /tmp/dpdk_klms/precompiled-klms/{{ ansible_kernel }}/* /opt/avi/kmod/
+  when: ansible_kernel_dpdk_klms.stat.exists
+
+- name: Avi SE | DPDK | Copy DPDK KLMS | 2/2
+  shell: cp /tmp/dpdk_klms/precompiled-klms/{{ klm_ver }}/* /opt/avi/kmod/
+  when: not ansible_kernel_dpdk_klms.stat.exists and klm_ver_dpdk_klms.stat.exists

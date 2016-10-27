@@ -1,0 +1,25 @@
+---
+# autoregistration tasks file for avinetworks.avise
+# these tasks will automatically register the service engine to the controller
+
+- name: Avi SE | Autoregistration | Check if required login vars are defined.
+  fail: msg="Variable {{ item }} is not defined"
+  when: item == None
+  with_items:
+    - master_ctl_username
+    - master_ctl_password
+
+- name: Avi SE | Autoregistration | Get a token from the Avi Controller
+  avi_api_session:
+    controller: "{{ master_ctl_ip }}"
+    username: "{{ master_ctl_username }}"
+    password: "{{ master_ctl_password }}"
+    http_method: get
+    path: securetoken-generate
+  register: authtoken
+
+- debug: msg="Recieved Authentication {{ authtoken.obj.auth_token }} from {{ master_ctl_ip }}"
+
+- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
+  set_fact:
+    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ authtoken.obj.auth_token }}']"

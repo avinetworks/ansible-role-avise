@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+#       /etc/rc.d/init.d/avise
+#
+#       Daemon for avise
+#
+# chkconfig:   2345 99 99
+# description: AVI SE
+
+### BEGIN INIT INFO
+# Provides:       avise
+# Required-Start: docker
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: start and stop avise
+# Description: AVISE
+### END INIT INFO
+
+
+prestart() {
+/usr/bin/docker kill avise
+/usr/bin/docker rm -f avise
+{% if dpdk %}{{ dpdk_pre }}{% endif %}
+}
+
+start() {
+prestart
+echo "Starting avise"
+/usr/bin/docker run {{ docker_run_params }}
+}
+
+stop() {
+echo "Stopping avise"
+/usr/bin/docker stop -t 20 avise
+/usr/bin/docker kill avise
+/usr/bin/docker rm -f avise
+{% if dpdk %}{{ dpdk_post }}{% endif %}
+}
+
+restart() {
+stop
+start
+}
+
+case "$1" in
+start)
+$1
+;;
+stop)
+$1
+;;
+restart)
+$1
+;;
+status)
+status avise
+;;
+*)
+echo $"Usage: $0 {start|stop|status|restart}"
+exit 2
+esac
+
+exit $?

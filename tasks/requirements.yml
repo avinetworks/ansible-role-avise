@@ -1,0 +1,74 @@
+---
+# check system against minimum Avi SE | Requirements
+
+- name: Avi SE | Requirements | Check if Master Controller IP is defined.
+  fail: msg="Variable master_ctl_ip is not defined"
+  when: master_ctl_ip == None
+
+- name: Avi SE | Requirements | Install python-netaddr on Ansible host | yum
+  yum: name=python-netaddr
+  delegate_to: localhost
+  ignore_errors: true
+  failed_when: false
+
+- name: Avi SE | Requirements | Install python-netaddr on Ansible host | apt
+  apt: name=python-netaddr
+  delegate_to: localhost
+  ignore_errors: true
+  failed_when: false
+
+- name: Avi SE | Requirements | Install python-netaddr on Ansible host | dnf
+  dnf: name=python-netaddr
+  delegate_to: localhost
+  ignore_errors: true
+  failed_when: false
+
+- name: Avi SE | Requirements | Verify the IP Address is Valid.
+  assert: { that: "master_ctl_ip | ipaddr" }
+
+- name: Avi SE | Requirements | Avi Service Engine needs 1 or more cores.
+  assert:
+    that:
+      - "ansible_processor_cores >= 1"
+      - "se_cores <= ansible_processor_cores"
+
+- name: Avi SE | Requirements | Set the ansible_memtotal_gb and se_memory_mb var
+  set_fact:
+    ansible_memtotal_gb: "{{ ansible_memtotal_mb / 1024 }}"
+
+- name: Avi SE | Requirements | Avi service Engine needs minimum 1GB memory and 1GB memory per core.
+  assert:
+    that:
+      - "ansible_memtotal_mb >= 1024"
+      - "se_memory_gb <= ansible_memtotal_gb"
+      - "se_memory_gb >= se_cores"
+
+- name: Avi SE | Requirements | Create directories for service engine
+  file: path="{{ item }}" state=directory mode=0755
+  when: item != None
+  with_items:
+    - "{{ se_disk_path }}"
+    - "{{ se_logs_disk_path }}"
+
+- block:
+    - name: Avi SE | Requirements | Get disk space on service engine disk path
+      shell: "df {{ se_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
+      changed_when: false
+      register: se_disk_path_space
+    - name: Avi SE | Requirements | Check if there is enough space for service engine disk path
+      assert:
+        that:
+          - se_disk_gb != None
+          - se_disk_path_space.stdout > se_disk_gb
+  when: se_disk_path != None
+
+- block:
+    - name: Avi SE | Requirements | Get disk space on service engine logs disk path
+      shell: "df {{ se_logs_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
+      register: se_logs_disk_path_space
+    - name: Avi SE | Requirements | Check if there is enough space for service engine logs disk path
+      assert:
+        that:
+          - se_logs_disk_gb != None
+          - se_logs_disk_path_space.stdout > se_logs_disk_gb
+  when: se_logs_disk_path != None

@@ -1,0 +1,30 @@
+---
+- name: Avi SE | Docker | Check existing Docker container is running
+  shell: docker ps -a | grep avinetworks/se | grep -v CONTAINER
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+  register: se_docker_container_exists
+
+- name: Avi SE | Docker | Stop existing Avi SE Docker container
+  shell: docker stop `docker ps -a | grep avinetworks/se | grep -v CONTAINER | awk '{printf "%s\\n",$1}'`
+  when: se_docker_container_exists.rc == 0
+
+- name: Avi SE | Docker | Remove existing Avi SE Docker container
+  shell: docker rm -f `docker ps -a | grep avinetworks/se | grep -v CONTAINER | awk '{printf "%s\\n",$1}'`
+  when: se_docker_container_exists.rc == 0
+
+- name: Avi SE | Docker | Check for existing Avi SE Docker image
+  shell: docker images | grep avinetworks/se
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+  register: se_docker_image_exists
+
+- name: Avi SE | Docker | Removing existing Avi SE Docker images
+  shell: docker rmi -f `docker images | grep avinetworks/se | grep -v REPOSITORY | awk '{printf "%s\\n",$3}'`
+  ignore_errors: true
+  when: se_docker_image_exists.rc == 0
+
+- name: Avi SE | Docker | Load the {{ se_version }} Avi SE image from Docker Hub
+  shell: "docker pull {{ se_image }}"

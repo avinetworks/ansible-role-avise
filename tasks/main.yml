@@ -1,0 +1,47 @@
+---
+# tasks file for avinetworks.avise
+- name: Avi SE | Check minimum requirements
+  include: requirements.yml
+  tags:
+    - requirements
+
+- name: Avi SE | Install DPDK Dependencies
+  include: dpdk.yml
+  when: dpdk
+
+- name: Avi SE | Check for existing avise service
+  stat:
+    path: "{{ item }}"
+  register: service_installed
+  with_items:
+    - /etc/systemd/system/avise.service
+    - /etc/init.d/avise
+
+- name: Avi SE | Stop avise service
+  service:
+    name: avise
+    enabled: no
+    state: stopped
+  when: "{{ item.stat.exists == true }}"
+  with_items: "{{ service_installed.results }}"
+
+- name: Avi SE | Perform Docker tasks
+  include: docker.yml
+
+- name: Avi SE | Perform Autoregistration
+  include: autoregistration.yml
+  when: autoregister
+
+- name: Avi SE | Install the Avi Service Engine systemd service
+  include: services/systemd.yml
+  when: ansible_service_mgr == 'systemd'
+
+- name: Avi SE | Install the Avi Service Engine init.d service
+  include: services/initd.yml
+  when: ansible_service_mgr != 'systemd'
+
+- name: Avi SE | Start avise service
+  service:
+    name: avise
+    enabled: yes
+    state: started

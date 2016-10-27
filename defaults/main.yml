@@ -9,7 +9,7 @@ se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
 master_ctl_ip: ~
-autoregister: false
+autoregister: true
 master_ctl_username: ~
 master_ctl_password: ~
 

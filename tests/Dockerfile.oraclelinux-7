@@ -19,6 +19,7 @@ RUN rpm -ivh epel-release-7-8.noarch.rpm
 RUN yum -y install git ansible sudo
 RUN yum clean all
 RUN ansible-galaxy install avinetworks.docker
+RUN ansible-galaxy install avinetworks.avisdk
 
 # Disable requiretty
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers

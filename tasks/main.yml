@@ -25,6 +25,10 @@
   when: "{{ item.stat.exists == true }}"
   with_items: "{{ service_installed.results }}"
 
+- name: Avi SE | Perform CentOS Tasks
+  include: os/centos.yml
+  when: ansible_distribution == "CentOS"
+
 - name: Avi SE | Perform Docker tasks
   include: docker.yml
 

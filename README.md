@@ -1,5 +1,9 @@
 # avinetworks.avise
 
+[![Build Status](https://travis-ci.org/avinetworks/ansible-role-avise.svg?branch=master)](https://travis-ci.org/avinetworks/ansible-role-avise)
+[![Ansible Galaxy](https://img.shields.io/badge/galaxy-avinetworks.avise-blue.svg)](https://galaxy.ansible.com/avinetworks/avise/)
+
+
 Using this module you are able to install the Avi Vantage Service Engine, to your system. However, minimum requirements must be met.
 
 ## Requirements
@@ -18,7 +22,7 @@ master_ctl_username: ~
 master_ctl_password: ~
 ```
 
-### Optional Variables (shown with defaults)
+### Optional Variables
 ```
 
 se_version: latest
@@ -67,6 +71,7 @@ mounts_all:
 ## Dependencies
 
 avinetworks.docker
+avinetworks.avisdk
 
 ## Example Playbook
 
@@ -88,7 +93,7 @@ avinetworks.docker
 
 ## License
 
-BSD
+MIT
 
 ## Author Information
 

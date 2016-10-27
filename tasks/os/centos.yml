@@ -1,6 +1,6 @@
 ---
 # centos specific tasks file for avinetworks.avise
-- name: Avi SE | CentOS | Deploy /etc/sysconfig/network-scripts/ifcfg-{{ item }}
+- name: Avi SE | CentOS | Deploy network-scripts
   template:
     src: templates/ifcfg-avi.j2
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"

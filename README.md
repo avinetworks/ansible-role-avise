@@ -13,7 +13,9 @@ Available variables listed below, for default values (see `defaults/main.yml`)
 ### Required Variables
 ```
 
-master_ctl_ip: ''
+master_ctl_ip: ~
+master_ctl_username: ~
+master_ctl_password: ~
 ```
 
 ### Optional Variables (shown with defaults)

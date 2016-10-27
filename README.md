@@ -18,7 +18,7 @@ master_ctl_username: ~
 master_ctl_password: ~
 ```
 
-### Optional Variables (shown with defaults)
+### Optional Variables
 ```
 
 se_version: latest

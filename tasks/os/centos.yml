@@ -5,6 +5,7 @@
     dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
     mode: 0644
   with_items:
+    - avi_eth0
     - avi_eth1
     - avi_eth2
     - avi_eth3

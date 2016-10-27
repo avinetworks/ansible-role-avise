@@ -1,0 +1,15 @@
+---
+# centos specific tasks file for avinetworks.avise
+- template:
+    src: templates/ifcfg-avi.j2
+    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
+    mode: 0644
+  with_items:
+    - avi_eth1
+    - avi_eth2
+    - avi_eth3
+    - avi_eth4
+    - avi_eth5
+    - avi_eth6
+    - avi_eth7
+    - avi_eth8

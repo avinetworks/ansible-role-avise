@@ -18,6 +18,7 @@ Available variables listed below, for default values (see `defaults/main.yml`)
 ```
 
 master_ctl_ip: ~
+# By default these are required. If `autoregister: false` these are not needed.
 master_ctl_username: ~
 master_ctl_password: ~
 ```
@@ -29,15 +30,12 @@ se_version: latest
 dpdk: false
 se_cores: "{{ ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb // 1024 }}"
-destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
+destination_disk: # By default this disk will be the largest disk determined by Ansible
 se_disk_path: "{{ destination_disk }}opt/avi/se/data"
 se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
-master_ctl_ip: ~
-autoregister: false
-master_ctl_username: ~
-master_ctl_password: ~
+autoregister: true
 
 # Use these to add parameters manually if desired. These do not overwrite the defaults.
 mounts_extras: [] # Do NOT need to include -v in each string
@@ -73,22 +71,34 @@ mounts_all:
 avinetworks.docker
 avinetworks.avisdk
 
-## Example Playbook
+## Example Playbooks
 
 **WARNING:**
 **Before using this example please make the correct changes required for your server. For more information please visit [https://kb.avinetworks.com/sizing-service-engines/] (https://kb.avinetworks.com/sizing-service-engines/)**
 
 **It is recommended you adjust these parameters based on the implementation desired.**
-
+### Standard Example
 ```
 
 - hosts: service_engines
   roles:
     - role: avinetworks.avise
       master_ctl_ip: 10.10.27.101
+      master_ctl_username: admin
+      master_ctl_password: avi123
       se_disk_gb: 60
-      se_cores: 4                     # If not specified core count is 4
-      se_memory_gb: 12                 # If not specified memory count is 12
+      se_cores: 4
+      se_memory_gb: 12
+```
+### Minimum Example
+```
+
+- hosts: service_engines
+  roles:
+    - role: avinetworks.avise
+      master_ctl_ip: 10.10.27.101
+      master_ctl_username: admin
+      master_ctl_password: avi123
 ```
 
 ## License

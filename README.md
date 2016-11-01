@@ -25,7 +25,7 @@ master_ctl_password: ~
 
 ### Optional Variables
 ```
-
+docker_repo: ~
 se_version: latest
 dpdk: false
 se_cores: "{{ ansible_processor_count }}"

@@ -13,6 +13,7 @@ autoregister: true
 master_ctl_username: ~
 master_ctl_password: ~
 
+docker_repo: ~
 se_image: "avinetworks/se:{{ se_version }}"
 
 

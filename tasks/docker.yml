@@ -26,5 +26,10 @@
   ignore_errors: true
   when: se_docker_image_exists.rc == 0
 
-- name: Avi SE | Docker | Load the {{ se_version }} Avi SE image from Docker Hub
+- name: Avi SE | Docker | Load the Avi SE image from Docker Hub
   shell: "docker pull {{ se_image }}"
+  when: docker_repo == None
+
+- name: Avi SE | Docker | Load the Avi SE image from custom Docker Repository
+  shell: "docker pull {{ docker_repo }}/{{ se_image }}"
+  when: docker_repo != None

@@ -25,8 +25,17 @@ master_ctl_password: ~
 
 ### Optional Variables
 ```
+# parameters for use when deploying as package
+package_deploy: false
+package_source: controller_docker.tgz
+package_dest: /tmp/controller_docker.tgz
+
+# parameters for use when pulling from docker hub or docker repo
 docker_repo: ~
 se_version: latest
+se_image: "avinetworks/se:{{ se_version }}"
+
+# standard parameters
 dpdk: false
 se_cores: "{{ ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb // 1024 }}"

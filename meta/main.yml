@@ -28,5 +28,4 @@ galaxy_info:
     - ubuntu
     - mesos
 dependencies:
-  - avinetworks.docker
   - avinetworks.avisdk

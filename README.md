@@ -8,7 +8,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 
 ## Requirements
 
-Requires Docker to be installed. We use `avinetworks.docker` to install Docker on a host. We also specify it in our metafile.
+Requires Docker to be installed. We have created `avinetworks.docker` to install Docker on a host. Please run that role first, or manually install Docker.
 
 ## Role Variables
 

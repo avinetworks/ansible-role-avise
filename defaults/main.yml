@@ -13,7 +13,7 @@ se_image: "avinetworks/se:{{ se_version }}"
 
 # standard parameters
 se_version: latest
-se_cores: "{{ ansible_processor_cores }}"
+se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb / 1024 }}"
 destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
 se_disk_path: "{{ destination_disk }}opt/avi/se/data"

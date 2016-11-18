@@ -28,4 +28,4 @@ galaxy_info:
     - ubuntu
     - mesos
 dependencies:
-  - avinetworks.avisdk
+  - { role: avinetworks.avisdk, avisdk_install: true }

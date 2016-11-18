@@ -1,10 +1,7 @@
 ---
 # centos specific tasks file for avinetworks.avise
 - name: Avi SE | CentOS | Deploy network-scripts
-  template:
-    src: templates/ifcfg-avi.j2
-    dest: "/etc/sysconfig/network-scripts/ifcfg-{{ item }}"
-    mode: 0644
+  template: src=templates/ifcfg-avi.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ item }} mode=0644
   with_items:
     - avi_eth0
     - avi_eth1

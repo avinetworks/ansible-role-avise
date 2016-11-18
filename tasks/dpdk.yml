@@ -14,7 +14,7 @@
   when: ansible_pkg_mgr == 'dnf'
 
 - name: Avi SE | DPDK | Check for supported network interface cards"
-  shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "82599|82598|X540|X710|XL710"
+  shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "{{ dpdk_supported_nics }}"
   register: dpdk_test_array
   changed_when: false
 

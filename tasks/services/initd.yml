@@ -1,8 +1,6 @@
+---
 - name: Deploy the avise service | init.d
-  template:
-    src: avise.j2
-    dest: /etc/init.d/avise
-    mode: 0744
+  template: src=avise.j2 dest=/etc/init.d/avise mode=0744
 
 - name: Deploying rc links
   file: src=/etc/init.d/avise dest={{ item }} state=link

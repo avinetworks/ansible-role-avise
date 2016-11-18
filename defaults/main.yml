@@ -3,8 +3,8 @@
 
 # parameters for use when deploying as package
 package_deploy: false
-package_source: controller_docker.tgz
-package_dest: /tmp/controller_docker.tgz
+package_source: se_docker.tgz
+package_dest: /tmp/se_docker.tgz
 
 # parameters for use when pulling from docker hub or docker repo
 docker_repo: ~
@@ -33,6 +33,7 @@ dpdk_pre: >
   insmod /opt/avi/kmod/rte_kni.ko; mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*;
   mount -t hugetlbfs nodev /mnt/huge
 dpdk_post: "rmmod igb_uio; rmmod rte_kni; umount /mnt/huge"
+dpdk_supported_nics: "82599|82598|X540|X710|XL710"
 
 # Mount variables which are sent to the docker container, these are used in the service templates.
 mounts_extras: []

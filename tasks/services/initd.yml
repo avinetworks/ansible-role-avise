@@ -1,3 +1,4 @@
+---
 - name: Deploy the avise service | init.d
   template: src=avise.j2 dest=/etc/init.d/avise mode=0744
 

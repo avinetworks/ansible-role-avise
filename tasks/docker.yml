@@ -1,31 +1,4 @@
 ---
-- name: Avi SE | Docker | Check existing Docker container is running
-  shell: docker ps -a | grep avinetworks/se | grep -v CONTAINER
-  ignore_errors: true
-  changed_when: false
-  failed_when: false
-  register: se_docker_container_exists
-
-- name: Avi SE | Docker | Stop existing Avi SE Docker container
-  shell: docker stop `docker ps -a | grep avinetworks/se | grep -v CONTAINER | awk '{printf "%s\\n",$1}'`
-  when: se_docker_container_exists.rc == 0
-
-- name: Avi SE | Docker | Remove existing Avi SE Docker container
-  shell: docker rm -f `docker ps -a | grep avinetworks/se | grep -v CONTAINER | awk '{printf "%s\\n",$1}'`
-  when: se_docker_container_exists.rc == 0
-
-- name: Avi SE | Docker | Check for existing Avi SE Docker image
-  shell: docker images | grep avinetworks/se
-  ignore_errors: true
-  changed_when: false
-  failed_when: false
-  register: se_docker_image_exists
-
-- name: Avi SE | Docker | Removing existing Avi SE Docker images
-  shell: docker rmi -f `docker images | grep avinetworks/se | grep -v REPOSITORY | awk '{printf "%s\\n",$3}'`
-  ignore_errors: true
-  when: se_docker_image_exists.rc == 0
-
 - name: Avi SE | Docker | Deploy the Avi SE image from the Package
   file: src={{ package_source }} dest={{ package_dest }}
   when: package_deploy
@@ -41,3 +14,17 @@
 - name: Avi SE | Docker | Load the Avi SE image from custom Docker Repository
   shell: "docker pull {{ docker_repo }}/{{ se_image }}"
   when: docker_repo != None and not package_deploy
+
+- name: Avi SE | Docker | Get list of running SE containers
+  shell: "docker ps -f ancestor=avinetworks/se -q"
+  register: running_se_containers
+
+- name: Avi SE | Docker | Check if desired version is already running.
+  shell: "docker ps -f ancestor={{ se_image }} -q"
+  register: desired_running
+
+- name: Avi SE | Docker | Stop and remove the container if it's not the desired version
+  shell: "docker stop {{ item }} && docker rm -f {{ item }}"
+  with_items:
+    - "{{ running_se_containers.stdout_lines }}"
+  when: item not in desired_running.stdout_lines

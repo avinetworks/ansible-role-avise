@@ -1,6 +1,5 @@
 ---
 # dpdk tasks file for avinetworks.avise
-
 - name: Avi SE | DPDK | Install PCI Utils | yum
   yum: name=pciutils
   when: ansible_pkg_mgr == 'yum'

@@ -47,6 +47,13 @@
       - "se_memory_gb <= ansible_memtotal_gb"
       - "se_memory_gb >= se_cores"
 
+- name: Avi SE | Requirements | Clean directories for fresh install
+  file: path="{{ item }}" state=absent
+  when: item != None and fresh_install
+  with_items:
+    - "{{ se_disk_path }}"
+    - "{{ se_logs_disk_path }}"
+
 - name: Avi SE | Requirements | Create directories for service engine
   file: path="{{ item }}" state=directory mode=0755
   when: item != None

@@ -1,6 +1,7 @@
 ---
 - name: Deploy the avise service | init.d
   template: src=avise.j2 dest=/etc/init.d/avise mode=0744
+  notify: Avi SE | Restart the Avi SE service | init.d
 
 - name: Deploying rc links
   file: src=/etc/init.d/avise dest={{ item }} state=link

@@ -1,3 +1,4 @@
 ---
-- name: Deploy the avise service | systemd
+- name: Avi SE | Requirements | Deploy the avise service | systemd
   template: src=avise.service.j2 dest=/etc/systemd/system/avise.service mode=0744
+  notify: Avi SE | Restart the Avi SE service | systemd

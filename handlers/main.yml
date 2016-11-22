@@ -1,6 +1,0 @@
----
-- name: Avi SE | Restart the Avi SE service | systemd
-  systemd: daemon_reload=yes name=avise enabled=yes state=restarted
-
-- name: Avi SE | Restart the Avi SE service | init.d
-  service: name=avise enabled=yes state=restarted

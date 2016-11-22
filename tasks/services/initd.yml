@@ -1,8 +1,9 @@
 ---
-- name: Deploy the avise service | init.d
+- name: Avi SE | Deploy the avise service | init.d
   template: src=avise.j2 dest=/etc/init.d/avise mode=0744
+  register: avise_service
 
-- name: Deploying rc links
+- name: Avi SE | Deploying rc links | init.d
   file: src=/etc/init.d/avise dest={{ item }} state=link
   with_items:
     - /etc/rc0.d/K99avise
@@ -12,3 +13,7 @@
     - /etc/rc4.d/S99avise
     - /etc/rc5.d/S99avise
     - /etc/rc6.d/K99avise
+
+- name: Avi SE | Restart the avise service | init.d
+  service: name=avise enabled=yes state=restarted
+  when: avise_service.changed or load_docker_repo.changed or load_docker_hub.changed

@@ -4,7 +4,7 @@
   fail: msg="Variable master_ctl_ip is not defined"
   when: master_ctl_ip == None
 
-- name: Avi Controller | Requirements | Set maximum core count
+- name: Avi SE | Requirements | Set maximum core count
   set_fact:
     max_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 

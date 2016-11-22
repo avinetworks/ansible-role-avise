@@ -17,3 +17,6 @@
 - name: Avi SE | Restart the avise service | init.d
   service: name=avise enabled=yes state=restarted
   when: avise_service.changed or load_docker_repo.changed or load_docker_hub.changed
+
+- name: Avi SE | Start the avise service | init.d
+  service: name=avise enabled=yes state=started

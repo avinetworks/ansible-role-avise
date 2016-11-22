@@ -3,53 +3,42 @@
 [![Build Status](https://travis-ci.org/avinetworks/ansible-role-avise.svg?branch=master)](https://travis-ci.org/avinetworks/ansible-role-avise)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-avinetworks.avise-blue.svg)](https://galaxy.ansible.com/avinetworks/avise/)
 
-
 Using this module you are able to install the Avi Vantage Service Engine, to your system. However, minimum requirements must be met.
 
 ## Requirements
 
-Requires Docker to be installed. We have created `avinetworks.docker` to install Docker on a host. Please run that role first, or manually install Docker.
+- Docker is required and can be installed using `avinetworks.docker` or manually installed.  
+
+- `avisdk` python library is required and can be installed by:  
+`pip install avisdk --upgrade`  
+
+- Requires the `avinetworks.avisdk` role to be installed. To install these use the following command:  
+  `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
 
-Available variables listed below, for default values (see `defaults/main.yml`)
-
-### Required Variables
-```
-
-master_ctl_ip: ~
-# By default these are required. If `autoregister: false` these are not needed.
-master_ctl_username: ~
-master_ctl_password: ~
-```
-
-### Optional Variables
-```
-# parameters for use when deploying as package
-package_deploy: false
-package_source: se_docker.tgz
-package_dest: /tmp/se_docker.tgz
-
-# parameters for use when pulling from docker hub or docker repo
-docker_repo: ~
-se_version: latest
-se_image: "avinetworks/se:{{ se_version }}"
-
-# standard parameters
-dpdk: false
-se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
-se_memory_gb: "{{ ansible_memtotal_mb // 1024 }}"
-destination_disk: # By default this disk will be the largest disk determined by Ansible
-se_disk_path: "{{ destination_disk }}opt/avi/se/data"
-se_disk_gb: 10
-se_logs_disk_path: ~
-se_logs_disk_gb: ~
-autoregister: true
-
-# Use these to add parameters manually if desired. These do not overwrite the defaults.
-mounts_extras: [] # Do NOT need to include -v in each string
-env_variables_extras: [] # Do NOT need to include -e in each string
-```
+| Variable | Required | Default | Comments |
+|-----------------------|----------|-----------|---------|
+| `master_ctl_ip` | Yes | `None` | The IP address of the controller. |
+| `master_ctl_username` | Yes | `None` | The username to login into controller api. <br>**Not required when `autoregister: false`** |
+| `master_ctl_password` | Yes | `None` | The passowrd to login into the controller api. <br>**Not required when `autoregister: false`** |
+| `autoregister` | No | `true` | Autoregisters the service engine to the specified controller. |
+| `package_deploy` | No | `false` | Set to true to deploy via package   |
+| `package_source` | No | `se_docker.tgz` | Source location of the docker tgz |
+| `package_dest` | No | `/tmp/se_docker.tgz` | Destination location on the remote server |
+| `docker_repo` | No | `None` | If using a local repository please enter it here. |
+| `se_version` | No | `latest` | Version of the Avi Service Engine package you want to deploy. |
+| `se_image` | No | `avinetworks/se:{{ se_version }}` | Full name of the service engine image. |
+| `dpdk` | No | false | When set to true performs dpdk installation. |
+| `se_cores` | No | `{{ ansible_processor_cores * ansible_processor_count }}` | How many cores the service engine will use. |
+| `se_memory_gb` | No | `{{ ansible_memtotal_mb / 1024 }}` | How much memory the service engine will use.  |
+| `destination_disk` | No | auto-detect based on `ansible_mounts` largest sized disk | The disk that the service engine data will be installed |
+| `se_disk_path` | No | `{{ destination_disk }}opt/avi/se/data` | The path that the service engine data will be installed. |
+| `se_disk_gb` | No | `10` | The size of the disk that will be used by service engine data. |
+| `se_logs_disk_path` | No | `None` | The path that the service engine log data will be stored. |
+| `se_logs_disk_gb` | No | `None` | The size of the disk that will be used by log data. |
+| `mounts_extras` | No | `[]` | Extra mounting points to be used by the service engine. <br>No need to include the `-v` |
+| `env_variables_extras` | No | `[]` | Extra environment variables to be used by the service engine. <br>No need to include `-e` |
 
 ### Parameter Override Variables
 However, you are able to provide these parameters another way. Using the following variables. This will allow the user to customize all values.  
@@ -77,7 +66,6 @@ mounts_all:
 
 ## Dependencies
 
-avinetworks.docker
 avinetworks.avisdk
 
 ## Example Playbooks

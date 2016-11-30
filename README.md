@@ -23,7 +23,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `master_ctl_username` | Yes | `None` | The username to login into controller api. <br>**Not required when `autoregister: false`** |
 | `master_ctl_password` | Yes | `None` | The passowrd to login into the controller api. <br>**Not required when `autoregister: false`** |
 | `autoregister` | No | `true` | Autoregisters the service engine to the specified controller. |
-| `package_deploy` | No | `false` | Set to true to deploy via package   |
+| `package_deploy` | No | `false` | Set to true to deploy via package. |
 | `package_source` | No | `se_docker.tgz` | Source location of the docker tgz |
 | `package_dest` | No | `/tmp/se_docker.tgz` | Destination location on the remote server |
 | `docker_repo` | No | `None` | If using a local repository please enter it here. |

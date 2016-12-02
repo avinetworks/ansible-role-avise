@@ -20,6 +20,7 @@ se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
 fresh_install: false
+skip_requirements: false
 master_ctl_ip: ~
 autoregister: true
 master_ctl_username: ~

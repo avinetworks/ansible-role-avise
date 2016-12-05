@@ -1,5 +1,10 @@
 ---
 # check system against minimum Avi SE | Requirements
+- name: Avi SE | Requirements | Check for docker
+  shell: "which docker"
+  register: docker
+  changed_when: false
+
 - name: Avi SE | Requirements | Check if Master Controller IP is defined.
   fail: msg="Variable master_ctl_ip is not defined"
   when: master_ctl_ip == None

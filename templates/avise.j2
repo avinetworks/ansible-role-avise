@@ -21,46 +21,45 @@
 
 
 prestart() {
-/usr/bin/docker kill avise
-/usr/bin/docker rm -f avise
-{% if dpdk %}{{ dpdk_pre }}{% endif %}
+  echo "Prestart avise"
+  /usr/bin/docker rm -f avise
+  {% if dpdk %}{{ dpdk_pre }}{% endif %}
 }
 
 start() {
-prestart
-echo "Starting avise"
-/usr/bin/docker run {{ docker_run_params }}
+  prestart
+  echo "Starting avise"
+  /usr/bin/docker run {{ docker_run_params }}
 }
 
 stop() {
-echo "Stopping avise"
-/usr/bin/docker stop -t 20 avise
-/usr/bin/docker kill avise
-/usr/bin/docker rm -f avise
-{% if dpdk %}{{ dpdk_post }}{% endif %}
+  echo "Stopping avise"
+  /usr/bin/docker stop -t 60 avise
+  /usr/bin/docker rm -f avise
+  {% if dpdk %}{{ dpdk_post }}{% endif %}
 }
 
 restart() {
-stop
-start
+  stop
+  start
 }
 
 case "$1" in
-start)
-$1
-;;
-stop)
-$1
-;;
-restart)
-$1
-;;
-status)
-status avise
-;;
-*)
-echo $"Usage: $0 {start|stop|status|restart}"
-exit 2
+  start)
+  $1
+  ;;
+  stop)
+  $1
+  ;;
+  restart)
+  $1
+  ;;
+  status)
+  status avise
+  ;;
+  *)
+  echo $"Usage: $0 {start|stop|status|restart}"
+  exit 2
 esac
 
 exit $?

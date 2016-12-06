@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+#       /etc/init.d/avise_watcher
+#
+#       Daemon for avise_watcher
+#
+# chkconfig:   2345 99 99
+# description: AVISE WATCHER
+
+### BEGIN INIT INFO
+# Provides:       avise_watcher
+# Required-Start: docker
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: start and stop avise_watcher
+# Description: AVISE Watcher
+### END INIT INFO
+
+start() {
+    echo "Starting avise watcher"
+    nohup /etc/init.d/avise_watcher.sh 0<&- &>/dev/null &
+}
+
+stop() {
+    echo "Stopping avise watcher"
+    ps -ef | grep avise_watcher.sh | grep -v grep | awk '{print $2}' | xargs --no-run-if-empty kill -9
+    service avise stop
+}
+
+restart() {
+    stop
+    start
+}
+
+case "$1" in
+  start)
+    $1
+    ;;
+  stop)
+    $1
+    ;;
+  restart)
+    $1
+    ;;
+  status)
+    docker ps -f name=avise
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart}"
+    exit 2
+    ;;
+esac
+
+exit $?

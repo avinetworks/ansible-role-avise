@@ -15,7 +15,7 @@ se_image: "avinetworks/se:{{ se_version }}"
 se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb / 1024 }}"
 destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
-se_disk_path: "{{ destination_disk }}opt/avi/se/data"
+se_disk_path: "{{ destination_disk }}/opt/avi/se/data"
 se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
@@ -26,15 +26,8 @@ autoregister: true
 master_ctl_username: ~
 master_ctl_password: ~
 
-
-# DPDK Variables which handle how DPDK is started and ran.
+# If dpdk set to true, will configure host for DPDK
 dpdk: false
-dpdk_pre: >
-  rmmod igb_uio; rmmod rte_kni; modprobe uio; insmod /opt/avi/kmod/igb_uio.ko;
-  insmod /opt/avi/kmod/rte_kni.ko; mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*;
-  mount -t hugetlbfs nodev /mnt/huge
-dpdk_post: "rmmod igb_uio; rmmod rte_kni; umount /mnt/huge"
-dpdk_supported_nics: "82599|82598|X540|X710|XL710"
 
 # Mount variables which are sent to the docker container, these are used in the service templates.
 mounts_extras: []
@@ -63,6 +56,3 @@ env_variables_default:
   - "{{ (se_logs_disk_gb == None) | ternary('', 'LOG_DISKSZ=' + ( se_logs_disk_gb|int * 1024 )|string ) }}"
 env_variables_all: "{{ env_variables_extras + env_variables_default }}"
 env_variables_string: "{% for env_var in env_variables_all|reject('match', '^$') %} -e {{ env_var }}{% endfor %}"
-
-# !!!! BEWARE: This is to completely override everything passed into the service template for the docker run. DON'T EDIT THIS UNLESS YOU KNOW WHAT YOUR DOING!!!!!
-docker_run_params: "--name=avise -d {{ env_variables_string }} --net=host {{ mounts_string }} --privileged=true {{ se_image }}"

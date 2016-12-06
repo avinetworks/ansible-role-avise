@@ -1,11 +1,16 @@
 ---
-- name: Avi SE | Deploy the avise service | systemd
+- name: Avi SE | Services | systemd | Configure the Docker Run Parameters
+  set_fact:
+    docker_run_params: "--name=avise -d {{ env_variables_string }} --net=host {{ mounts_string }} --privileged=true {{ se_image }}"
+  when: not docker_run_params
+
+- name: Avi SE | Services | systemd | Deploy the avise service
   template: src=avise.service.j2 dest=/etc/systemd/system/avise.service mode=0744
   register: avise_service
 
-- name: Avi SE | Restart the avise service | systemd
+- name: Avi SE | Services | systemd | Restart the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=restarted
   when: avise_service.changed or load_docker_repo.changed or load_docker_hub.changed
 
-- name: Avi SE | Start the avise service | systemd
+- name: Avi SE | Services | systemd | Start the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=started

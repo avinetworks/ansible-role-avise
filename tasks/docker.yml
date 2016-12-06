@@ -1,15 +1,20 @@
 ---
-- name: Avi SE | Docker | Check if specified image already exists.
-  shell: "docker images -q {{ se_image }}"
-  changed_when: false
-  register: docker_match
-
+# We must do this step first just in case we need to override defaults from the supplied package
 - block:
     - name: Avi SE | Docker | Deploy the image from the package
       copy: src={{ package_source }} dest={{ package_dest }}
     - name: Avi SE | Docker | Load the image from the package
-      shell: "docker load -i {{ package_dest }}"
+      shell: "docker load -q -i {{ package_dest }} | awk -F':' '{print $3}'"
+      register: load_docker_image
+    - set_fact:
+        se_version: "{{ load_docker_image.stdout }}"
+        se_image: "avinetworks/se:{{ load_docker_image.stdout }}"
   when: package_deploy
+
+- name: Avi SE | Docker | Check if specified image already exists.
+  shell: "docker images -q {{ se_image }}"
+  changed_when: false
+  register: docker_match
 
 - name: Avi SE | Docker | Load the image from docker hub
   shell: "docker pull {{ se_image }}"

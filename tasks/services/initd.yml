@@ -1,9 +1,14 @@
 ---
-- name: Avi SE | Deploy the avise service | init.d
+- name: Avi SE | Services | init.d | Configure the Docker Run Parameters
+  set_fact:
+    docker_run_params: "--name=avise -d {{ env_variables_string }} -e NON_SYSTEMD=1 --net=host {{ mounts_string }} --privileged=true {{ se_image }}"
+  when: not docker_run_params
+
+- name: Avi SE | Services | init.d | Deploy the avise service
   template: src=avise.j2 dest=/etc/init.d/avise mode=0744
   register: avise_service
 
-- name: Avi SE | Deploying rc links | init.d
+- name: Avi SE | Services | init.d | Deploying rc links
   file: src=/etc/init.d/avise dest={{ item }} state=link
   with_items:
     - /etc/rc0.d/K99avise
@@ -13,10 +18,23 @@
     - /etc/rc4.d/S99avise
     - /etc/rc5.d/S99avise
     - /etc/rc6.d/K99avise
+  when: se_version < 16.3
 
-- name: Avi SE | Restart the avise service | init.d
+- name: Avi SE | Services | init.d | Deploying rc links
+  file: src=/etc/init.d/avise_watcher dest={{ item }} state=link
+  with_items:
+    - /etc/rc0.d/K99avise_watcher
+    - /etc/rc1.d/K99avise_watcher
+    - /etc/rc2.d/S99avise_watcher
+    - /etc/rc3.d/S99avise_watcher
+    - /etc/rc4.d/S99avise_watcher
+    - /etc/rc5.d/S99avise_watcher
+    - /etc/rc6.d/K99avise_watcher
+  when: se_version >= 16.3
+
+- name: Avi SE | Services | init.d | Restart the avise service
   service: name=avise enabled=yes state=restarted
   when: avise_service.changed or load_docker_repo.changed or load_docker_hub.changed
 
-- name: Avi SE | Start the avise service | init.d
+- name: Avi SE | Services | init.d | Start the avise service
   service: name=avise enabled=yes state=started

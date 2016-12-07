@@ -23,6 +23,7 @@ se_logs_disk_path: ~
 se_logs_disk_gb: ~
 fresh_install: false
 skip_requirements: false
+inband_mgmt: false
 master_ctl_ip: ~
 autoregister: true
 
@@ -51,6 +52,7 @@ env_variables_default:
   - "CONTROLLERIP={{ master_ctl_ip | string }}"
   - "NTHREADS={{ se_cores|int }}"
   - "SEMEMMB={{ se_memory_gb|int * 1024 }}"
+  - "{{ inband_mgmt | ternary('SE_INBAND_MGMT=true', 'SE_INBAND_MGMT=false') }}"
   - "{{ dpdk | ternary('DOCKERNETWORKMODE=HOST_DPDK', 'DOCKERNETWORKMODE=HOST') }}"
   - "{{ (se_disk_gb == None) | ternary('', 'DISKSZ=' + ( se_disk_gb|int * 1024 )|string ) }}"
   - "{{ (se_logs_disk_gb == None) | ternary('', 'LOG_DISKSZ=' + ( se_logs_disk_gb|int * 1024 )|string ) }}"

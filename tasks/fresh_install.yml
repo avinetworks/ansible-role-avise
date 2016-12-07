@@ -1,0 +1,16 @@
+---
+- name: Avi SE | Requirements | Stop the avise_watcher service for fresh install | init.d
+  service: name=avise_watcher enabled=no state=stopped
+
+- name: Avi SE | Requirements | Stop the avise service for fresh install | init.d
+  service: name=avise enabled=no state=stopped
+
+- name: Avi SE | Requirements | Stop the service for fresh install | systemd
+  systemd: daemon_reload=yes name=avise enabled=no state=stopped
+
+- name: Avi SE | Requirements | Clean directories for fresh install
+  file: path="{{ item }}" state=absent
+  when: item != None
+  with_items:
+    - "{{ se_disk_path }}"
+    - "{{ se_logs_disk_path }}"

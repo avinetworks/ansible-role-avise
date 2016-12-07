@@ -8,6 +8,8 @@ package_dest: /tmp/se_docker.tgz
 
 # parameters for use when pulling from docker hub or docker repo
 docker_repo: ~
+docker_repo_user: ~
+docker_repo_password: ~
 se_version: latest
 se_image: "avinetworks/se:{{ se_version }}"
 
@@ -23,8 +25,6 @@ fresh_install: false
 skip_requirements: false
 master_ctl_ip: ~
 autoregister: true
-master_ctl_username: ~
-master_ctl_password: ~
 
 # If dpdk set to true, will configure host for DPDK
 dpdk: false
@@ -56,3 +56,6 @@ env_variables_default:
   - "{{ (se_logs_disk_gb == None) | ternary('', 'LOG_DISKSZ=' + ( se_logs_disk_gb|int * 1024 )|string ) }}"
 env_variables_all: "{{ env_variables_extras + env_variables_default }}"
 env_variables_string: "{% for env_var in env_variables_all|reject('match', '^$') %} -e {{ env_var }}{% endfor %}"
+
+# !!!! BEWARE: This is to completely override everything passed into the service template for the docker run. DON'T EDIT THIS UNLESS YOU KNOW WHAT YOUR DOING!!!!!
+docker_run_params: "--name=avise -d {{ env_variables_string }} --net=host {{ mounts_string }} --privileged=true {{ se_image }}"

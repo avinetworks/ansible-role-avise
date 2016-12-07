@@ -1,9 +1,4 @@
 ---
-- name: Avi SE | Services | systemd | Configure the Docker Run Parameters
-  set_fact:
-    docker_run_params: "--name=avise -d {{ env_variables_string }} --net=host {{ mounts_string }} --privileged=true {{ se_image }}"
-  when: not docker_run_params
-
 - name: Avi SE | Services | systemd | Deploy the avise service
   template: src=avise.service.j2 dest=/etc/systemd/system/avise.service mode=0744
   register: avise_service

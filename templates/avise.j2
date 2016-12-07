@@ -30,6 +30,7 @@ start() {
   prestart
   echo "Starting avise"
   /usr/bin/docker run {{ docker_run_params }}
+  /usr/bin/docker wait avise
 }
 
 stop() {

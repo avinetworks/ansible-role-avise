@@ -1,0 +1,18 @@
+---
+- name: Avi SE | Services | upstart | Deploy the avise service
+  template: src=upstart/avise.conf.j2 dest=/etc/init/avise.conf mode=0744
+  register: avise_service
+
+- name: Avi SE | Services | upstart | Deploy the init avise service
+  template: src=upstart/avise.j2 dest=/etc/init/avise.conf mode=0744
+  register: avise_init_service
+
+- name: Avi SE | Services | upstart | Restart the avise service
+  service: name=avise enabled=yes state=restarted
+  when: avise_service.changed or
+        avise_init_service.changed or
+        load_docker_repo.changed or
+        load_docker_hub.changed
+
+- name: Avi SE | Services | upstart | Start the avise service
+  service: name=avise enabled=yes state=started

@@ -1,0 +1,45 @@
+# Avi SE upstart file at /etc/init/avise.conf
+
+description "Avi SE Service"
+author      "Avi Networks <support@avinetworks.com>"
+
+# When to start the service
+start on filesystem and started docker and runlevel [2345]
+
+# When to stop the service
+stop on runlevel [!2345]
+
+# Automatically restart the process if crashed
+respawn
+respawn limit 2 5
+
+pre-start script
+  if `docker ps -a -f name=avise | grep -q avise`; then
+    echo "[`date`] Removing existing Avi SE Container" >> /var/log/avise.log
+    /usr/bin/docker rm -f avise
+  fi
+  {% if dpdk %}{{ dpdk_pre }}{% endif %}
+  echo "[`date`] Starting the Avi SE Container" >> /var/log/avise.log
+  /usr/bin/docker run {{ docker_run_params }} >> /var/log/avise.log
+end script
+
+script
+  # Keep service running as long as the container is running
+  echo "[`date`] Waiting for Avi SE Container" >> /var/log/avise.log
+  /usr/bin/docker wait avise
+end script
+
+post-stop script
+  # Stopping the docker process if running
+  if $(docker ps -f name=avise | grep -q avise); then
+    /usr/bin/docker stop -t 60 avise >> /var/log/avise.log
+    echo "[`date`] Stopped Avi SE" >> /var/log/avise.log
+  else
+    echo "[`date`] Avi SE already stopped" >> /var/log/avise.log
+  fi
+  if $(docker ps -a -f name=avise | grep -q avise); then
+    /usr/bin/docker rm -f avise >> /var/log/avise.log
+    echo "[`date`] Removed Avi SE container" >> /var/log/avise.log
+  fi
+  {% if dpdk %}{{ dpdk_post }}{% endif %}
+end script

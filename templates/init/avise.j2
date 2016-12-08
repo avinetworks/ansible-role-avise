@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#       /etc/rc.d/init.d/avise
+#       /etc/init.d/avise
 #
 #       Daemon for avise
 #
@@ -19,15 +19,9 @@
 # Description: AVISE
 ### END INIT INFO
 
-
-prestart() {
-  echo "Prestart avise"
+start() {
   /usr/bin/docker rm -f avise
   {% if dpdk %}{{ dpdk_pre }}{% endif %}
-}
-
-start() {
-  prestart
   echo "Starting avise"
   /usr/bin/docker run {{ docker_run_params }}
   /usr/bin/docker wait avise
@@ -35,7 +29,12 @@ start() {
 
 stop() {
   echo "Stopping avise"
-  /usr/bin/docker stop -t 60 avise
+  if `docker ps -f name=avise | grep -q avise`; then
+    /usr/bin/docker stop -t 60 avise
+    echo "Stopped Avi SE"
+  else
+    echo "Avi SE already stopped"
+  fi
   /usr/bin/docker rm -f avise
   {% if dpdk %}{{ dpdk_post }}{% endif %}
 }
@@ -45,18 +44,26 @@ restart() {
   start
 }
 
+status() {
+  if `docker ps -f name=avise | grep -q avise`; then
+    echo "Avi SE is Running"
+  else
+    echo "Avi SE is Stopped"
+  fi
+}
+
 case "$1" in
   start)
-  $1
-  ;;
+    $1
+    ;;
   stop)
-  $1
-  ;;
+    $1
+    ;;
   restart)
-  $1
-  ;;
+    $1
+    ;;
   status)
-  status avise
+    status avise
   ;;
   *)
   echo $"Usage: $0 {start|stop|status|restart}"

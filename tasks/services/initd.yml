@@ -3,7 +3,7 @@
     env_variables_extras: "{{ env_variables_extras + ['NON_SYSTEMD=1'] }}"
 
 - name: Avi SE | Services | init.d | Deploy the avise service
-  template: src=avise.j2 dest=/etc/init.d/avise mode=0744
+  template: src=init/avise.j2 dest=/etc/init.d/avise mode=0744
   register: avise_service
 
 - name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script

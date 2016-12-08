@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+#       /etc/init.d/avise
+#
+#       Daemon for avise
+#
+# chkconfig:   2345 99 99
+# description: AVI SE
+
+### BEGIN INIT INFO
+# Provides:       avise
+# Required-Start: docker
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: start and stop avise
+# Description: AVISE
+### END INIT INFO
+
+case "$1" in
+  start)
+    /sbin/initctl start avise
+    ;;
+  stop)
+    /sbin/initctl stop avise
+    ;;
+  restart)
+    /sbin/initctl restart avise
+    ;;
+  status)
+    /sbin/initctl status avise
+    ;;
+  *)
+  echo $"Usage: $0 {start|stop|status|restart}"
+  exit 2
+esac
+
+exit $?

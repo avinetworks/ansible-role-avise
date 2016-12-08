@@ -1,12 +1,15 @@
 ---
 - name: Avi SE | Requirements | Stop the avise_watcher service for fresh install | init.d
   service: name=avise_watcher enabled=no state=stopped
+  when: ansible_service_mgr != 'systemd'
 
 - name: Avi SE | Requirements | Stop the avise service for fresh install | init.d
   service: name=avise enabled=no state=stopped
+  when: ansible_service_mgr != 'systemd'
 
 - name: Avi SE | Requirements | Stop the service for fresh install | systemd
   systemd: daemon_reload=yes name=avise enabled=no state=stopped
+  when: ansible_service_mgr == 'systemd'
 
 - name: Avi SE | Requirements | Clean directories for fresh install
   file: path="{{ item }}" state=absent

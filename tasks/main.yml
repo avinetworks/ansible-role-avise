@@ -18,5 +18,5 @@
   include: autoregistration.yml
   when: autoregister
 
-- name: Avi SE | Install the Avi Service Engine services
+- name: Avi SE | Install the Avi SE service
   include: services/main.yml

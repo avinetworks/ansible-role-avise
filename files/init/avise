@@ -5,7 +5,7 @@
 #       Daemon for avise
 #
 # chkconfig:   2345 99 99
-# description: AVI SE
+# description: Service for the Avi SE
 
 ### BEGIN INIT INFO
 # Provides:       avise
@@ -16,25 +16,19 @@
 # Default-Start: 2 3 4 5
 # Default-Stop:  0 1 6
 # Short-Description: start and stop avise
-# Description: AVISE
+# Description: Service for the Avi SE
 ### END INIT INFO
 
 case "$1" in
-  start)
-    /sbin/initctl start avise
+  start|restart|reload)
+    /usr/sbin/avise $1 &
     ;;
-  stop)
-    /sbin/initctl stop avise
-    ;;
-  restart)
-    /sbin/initctl restart avise
-    ;;
-  status)
-    /sbin/initctl status avise
+  stop|status)
+    /usr/sbin/avise $1
     ;;
   *)
-  echo $"Usage: $0 {start|stop|status|restart}"
-  exit 2
+    echo $"Usage: $0 {start|stop|status|restart|reload}"
+    exit 2
 esac
 
 exit $?

@@ -1,5 +1,5 @@
 [Unit]
-Description=AVISE
+Description=Avi SE
 After=docker.service
 Requires=docker.service
 
@@ -10,10 +10,11 @@ Restart=always
 ExecStartPre=-/usr/bin/docker rm -f avise
 {% if dpdk %}ExecStartPre=-/usr/bin/bash -c {{ dpdk_pre }}{% endif %}
 ExecStartPre=/usr/bin/docker run {{ docker_run_params }}
-ExecStart=/usr/bin/docker wait avise
-ExecStop=-/usr/bin/docker stop -t 60 avise
+ExecStart=/usr/bin/docker logs -f avise
+ExecStop=-/usr/bin/docker stop -t 20 avise
 ExecStopPost=-/usr/bin/docker rm -f avise
 {% if dpdk %}ExecStopPost=-/usr/bin/bash -c {{ dpdk_post }}{% endif %}
+
 
 [Install]
 WantedBy=multi-user.target

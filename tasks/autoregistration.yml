@@ -16,6 +16,7 @@
     password: "{{ master_ctl_password }}"
     http_method: get
     path: securetoken-generate
+  delegate_to: localhost
   register: authtoken
 
 - debug: msg="Recieved Authentication {{ authtoken.obj.auth_token }} from {{ master_ctl_ip }}"

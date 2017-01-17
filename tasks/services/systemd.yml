@@ -1,11 +1,26 @@
 ---
-- name: Avi SE | Deploy the avise service | systemd
-  template: src=avise.service.j2 dest=/etc/systemd/system/avise.service mode=0744
+- name: Avi SE | Services | systemd | 16.x | Deploy the avise service
+  template:
+    src: 16.x/avise.service.j2
+    dest: /etc/systemd/system/avise.service
+    mode: 0644
   register: avise_service
+  when: se_version|version_compare('17.0.0', '<')
 
-- name: Avi SE | Restart the avise service | systemd
+- name: Avi SE | Services | systemd | 17.x+ | Deploy the avise service
+  copy:
+    src: systemd/avise.service
+    dest: /etc/systemd/system/avise.service
+    mode: 0644
+  register: avise_service
+  when: se_version|version_compare('17.0.0', '>=')
+
+# Standard steps
+- name: Avi SE | Services | systemd | Restart the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=restarted
-  when: avise_service.changed or load_docker_repo.changed or load_docker_hub.changed
+  when: avise_service.changed or
+        load_docker_repo.changed or
+        load_docker_hub.changed
 
-- name: Avi SE | Start the avise service | systemd
+- name: Avi SE | Services | systemd | Start the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=started

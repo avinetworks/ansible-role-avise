@@ -1,66 +1,126 @@
-#!/bin/sh
-#
-#       /etc/rc.d/init.d/avise
-#
-#       Daemon for avise
-#
-# chkconfig:   2345 99 99
-# description: AVI SE
+#!/bin/bash
+## Usage: avise [options] ARG1
+## Description: This script manages and provides manage of the Avi SE services.
+## Author: Eric Anderson <support@avinetworks.com>
+## Date: 2016-12-20
 
-### BEGIN INIT INFO
-# Provides:       avise
-# Required-Start: docker
-# Required-Stop:
-# Should-Start:
-# Should-Stop:
-# Default-Start: 2 3 4 5
-# Default-Stop:  0 1 6
-# Short-Description: start and stop avise
-# Description: AVISE
-### END INIT INFO
 
+# Set common variables
+container=avise
+service_desc="Avi SE"
+docker_exec=/usr/bin/docker
+logfile="/var/log/${container}.log"
+cidfile="/var/run/${container}.cid"
+image_name="avinetworks/se"
+dev_name="{{ dev_name }}"
+docker_run_params="{{ docker_run_params }}"
+
+write_log() {
+  echo $1 2>&1 | tee -a ${logfile}
+}
+
+container_running() {
+  docker ps -f name=${container} | grep -q ${container}
+}
+
+container_exists() {
+  docker ps -a -f name=${container} | grep -q ${container}
+}
+
+start_container() {
+  write_log "[`date`] Starting the ${container} container"
+  /usr/bin/docker run ${docker_run_params}
+  if [ $? -eq 0 ]; then
+    write_log "[`date`] Service ${container} running..."
+  else
+    write_log "[`date`] Failed to start the ${container} container"
+    exit 1
+  fi
+}
+
+stop_container() {
+  /usr/bin/docker stop -t 60 ${container}
+  if [ $? -eq 0 ]; then
+    write_log "[`date`] Stopped the ${container} container"
+  else
+    exit 1
+  fi
+}
+
+remove_container() {
+  write_log "[`date`] Removing existing ${container} container"
+  /usr/bin/docker rm -f ${container}
+  if [ $? -eq 0 ]; then
+    write_log "[`date`] Removed existing ${container} container"
+  else
+    write_log "[`date`] Failed to remove existing ${container} container"
+  fi
+}
 
 prestart() {
-/usr/bin/docker kill avise
-/usr/bin/docker rm -f avise
-{% if dpdk %}{{ dpdk_pre }}{% endif %}
+  # Clean up any running or existing avicontroller containers
+  write_log "[`date`] Performing ${container} pre-start step."
+  if container_running && container_exists; then
+    write_log "[`date`] Service ${container} is already running."
+  elif ! container_running && container_exists; then
+    write_log "[`date`] Container ${container} already exists, but not running. This can be caused by an
+      improper shutdown, or service crash. Performing cleanup"
+    remove_container
+    {% if dpdk %}{{ dpdk_pre }}{% endif %}
+    start_container
+  else
+    {% if dpdk %}{{ dpdk_pre }}{% endif %}
+    start_container
+  fi
 }
 
 start() {
-prestart
-echo "Starting avise"
-/usr/bin/docker run {{ docker_run_params }}
+  prestart
+  /usr/bin/docker wait ${container}
 }
 
 stop() {
-echo "Stopping avise"
-/usr/bin/docker stop -t 20 avise
-/usr/bin/docker kill avise
-/usr/bin/docker rm -f avise
-{% if dpdk %}{{ dpdk_post }}{% endif %}
+  # Stopping the docker process if running
+  if container_running; then
+    write_log "[`date`] Service ${container} stopping..."
+    stop_container
+  else
+    write_log "[`date`] Service ${container} already stopped"
+  fi
+  poststop
+}
+
+poststop() {
+  if container_exists; then
+    remove_container
+  fi
+  {% if dpdk %}{{ dpdk_post }}{% endif %}
 }
 
 restart() {
-stop
-start
+  stop
+  start
+}
+
+reload() {
+  restart
+}
+
+status() {
+  if container_running; then
+    echo "${container} running..."
+  else
+    echo "${container} stopped"
+  fi
 }
 
 case "$1" in
-start)
-$1
-;;
-stop)
-$1
-;;
-restart)
-$1
-;;
-status)
-status avise
-;;
-*)
-echo $"Usage: $0 {start|stop|status|restart}"
-exit 2
+  start|stop|status|restart|reload)
+    $1
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload}"
+    exit 2
 esac
 
 exit $?

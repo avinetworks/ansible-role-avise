@@ -1,5 +1,10 @@
 ---
 # check system against minimum Avi SE | Requirements
+- name: Avi SE | Requirements | Check for docker
+  shell: "which docker"
+  register: docker
+  changed_when: false
+
 - name: Avi SE | Requirements | Check if Master Controller IP is defined.
   fail: msg="Variable master_ctl_ip is not defined"
   when: master_ctl_ip == None
@@ -24,13 +29,11 @@
       - "ansible_memtotal_mb >= 1024"
       - "se_memory_gb <= ansible_memtotal_gb"
       - "se_memory_gb >= se_cores"
+  when: not skip_requirements
 
-- name: Avi SE | Requirements | Clean directories for fresh install
-  file: path="{{ item }}" state=absent
-  when: item != None and fresh_install
-  with_items:
-    - "{{ se_disk_path }}"
-    - "{{ se_logs_disk_path }}"
+- name: Avi SE | Requirements | Fresh install steps
+  include: fresh_install.yml
+  when: fresh_install
 
 - name: Avi SE | Requirements | Create directories for service engine
   file: path="{{ item }}" state=directory mode=0755
@@ -39,25 +42,27 @@
     - "{{ se_disk_path }}"
     - "{{ se_logs_disk_path }}"
 
-- block:
-    - name: Avi SE | Requirements | Get disk space on service engine disk path
-      shell: "df {{ se_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
-      changed_when: false
-      register: se_disk_path_space
-    - name: Avi SE | Requirements | Check if there is enough space for service engine disk path
-      assert:
-        that:
-          - se_disk_gb != None
-          - se_disk_path_space.stdout > se_disk_gb
+- name: Avi SE | Requirements | Get disk space on service engine disk path
+  shell: "df {{ se_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
+  changed_when: false
+  register: se_disk_path_space
+  when: se_disk_path != None and not skip_requirements
+
+- name: Avi SE | Requirements | Get disk space on service engine logs disk path
+  shell: "df {{ se_logs_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
+  register: se_logs_disk_path_space
+  when: se_logs_disk_path != None and not skip_requirements
+
+- name: Avi SE | Requirements | Check if there is enough space for service engine disk path
+  assert:
+    that:
+      - se_disk_gb != None
+      - se_disk_path_space.stdout > se_disk_gb
   when: se_disk_path != None
 
-- block:
-    - name: Avi SE | Requirements | Get disk space on service engine logs disk path
-      shell: "df {{ se_logs_disk_path }} -BG | grep -iv Used | awk '{print $4}' | sed s/G//g"
-      register: se_logs_disk_path_space
-    - name: Avi SE | Requirements | Check if there is enough space for service engine logs disk path
-      assert:
-        that:
-          - se_logs_disk_gb != None
-          - se_logs_disk_path_space.stdout > se_logs_disk_gb
+- name: Avi SE | Requirements | Check if there is enough space for service engine logs disk path
+  assert:
+    that:
+      - se_logs_disk_gb != None
+      - se_logs_disk_path_space.stdout > se_logs_disk_gb
   when: se_logs_disk_path != None

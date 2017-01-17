@@ -1,0 +1,13 @@
+---
+- block:
+    - name: Avi SE | Services | Install the Avi SE service
+      include: "systemd.yml"
+      when: ansible_service_mgr == "systemd"
+    - name: Avi SE | Services | Install the Avi SE service
+      include: "initd.yml"
+      when: ansible_service_mgr != "systemd"
+  when: se_version|version_compare('17.0.0', '<')
+
+- name: Avi SE | Services | Install the Avi SE service
+  include: "{{ ansible_service_mgr }}.yml"
+  when: se_version|version_compare('17.0.0', '>=')

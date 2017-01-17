@@ -1,0 +1,108 @@
+#!/bin/sh
+#
+#       /etc/rc.d/init.d/avise
+#
+#       Daemon for avise
+#
+# chkconfig:   2345 99 99
+# description: Avi SE service
+
+### BEGIN INIT INFO
+# Provides:       avise
+# Required-Start: docker
+# Required-Stop:
+# Should-Start:
+# Should-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop:  0 1 6
+# Short-Description: start and stop avise
+# Description: Avi SE
+### END INIT INFO
+
+write_log() {
+  echo $1 2>&1 | tee -a /var/log/avise.log
+}
+
+remove_container() {
+  write_log "[`date`] Removing existing avise container"
+  /usr/bin/docker rm -f avise
+  if [ $? -eq 0 ]; then
+    write_log "[`date`] Removed existing avise container"
+  else
+    write_log "[`date`] Failed to remove existing avise container"
+  fi
+}
+
+prestart() {
+  # Clean up any running or existing avise containers
+  write_log "[`date`] Performing avise pre-start steps"
+  if $(docker ps -a -f name=avise | grep -q avise); then
+    write_log "[`date`] Already running avise container performing cleanup"
+    remove_container
+  fi
+  {% if dpdk %}{{ dpdk_pre }}{% endif %}
+}
+
+start() {
+  prestart
+  write_log "[`date`] Starting the avise container"
+  /usr/bin/docker run {{ docker_run_params }}
+  if [ $? -eq 0 ]; then
+    write_log "[`date`] Service avise running..."
+    /usr/bin/docker wait avise
+  else
+    write_log "[`date`] Failed to start the avise container"
+    exit 1
+  fi
+}
+
+stop() {
+  # Stopping the docker process if running
+  if $(docker ps -f name=avise | grep -q avise); then
+    write_log "[`date`] Service avise stopping..."
+    /usr/bin/docker stop -t 60 avise
+    if [ $? -eq 0 ]; then
+      write_log "[`date`] Stopped the avise container"
+    else
+      exit 1
+    fi
+  else
+    write_log "[`date`] Service avise already stopped"
+  fi
+  poststop
+}
+
+poststop() {
+  {% if dpdk %}{{ dpdk_post }}{% endif %}
+  if $(docker ps -a -f name=avise | grep -q avise); then
+    remove_container
+  fi
+}
+
+restart() {
+  stop
+  start
+}
+
+reload() {
+  restart
+}
+
+status() {
+  if $(docker ps -f name=avise | grep -q avise); then
+    echo "avise running..."
+  else
+    echo "avise stopped"
+  fi
+}
+
+case "$1" in
+  start|stop|status|restart|reload)
+    $1
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|restart|reload}"
+    exit 2
+esac
+
+exit $?

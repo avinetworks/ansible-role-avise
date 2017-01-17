@@ -12,6 +12,31 @@
   dnf: name=pciutils
   when: ansible_pkg_mgr == 'dnf'
 
+- name: Avi SE | DPDK | Configure DPDK Parameters
+  set_fact:
+    dpdk_pre: >
+      rmmod igb_uio; rmmod rte_kni; modprobe uio; insmod /opt/avi/kmod/igb_uio.ko;
+      insmod /opt/avi/kmod/rte_kni.ko; mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*;
+      mount -t hugetlbfs nodev /mnt/huge
+  when: se_version < 16.3 and dpdk_pre is undefined
+
+- name:
+  set_fact:
+    dpdk_pre: >
+      modprobe uio;
+      mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*; mount -t hugetlbfs nodev /mnt/huge
+  when: se_version >= 16.3 and dpdk_pre is undefined
+
+- name:
+  set_fact:
+    dpdk_post: "rmmod igb_uio; rmmod rte_kni; umount /mnt/huge"
+  when: dpdk_post is undefined
+
+- name:
+  set_fact:
+    dpdk_supported_nics: "82599|82598|X540|X710|XL710"
+  when: dpdk_supported_nics is undefined
+
 - name: Avi SE | DPDK | Check for supported network interface cards"
   shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "{{ dpdk_supported_nics }}"
   register: dpdk_test_array

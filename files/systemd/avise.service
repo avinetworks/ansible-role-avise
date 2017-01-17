@@ -1,0 +1,14 @@
+[Unit]
+Description=Avi SE Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+
+ExecStart=/usr/sbin/avise start
+ExecStop=/usr/sbin/avise stop
+
+[Install]
+WantedBy=multi-user.target

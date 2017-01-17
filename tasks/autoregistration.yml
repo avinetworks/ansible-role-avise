@@ -3,8 +3,8 @@
 # these tasks will automatically register the service engine to the controller
 
 - name: Avi SE | Autoregistration | Check if required login vars are defined.
-  fail: msg="Variable {{ item }} is not defined"
-  when: item == None
+  fail: msg="Variable {{ item }} is undefined"
+  when: item is undefined
   with_items:
     - master_ctl_username
     - master_ctl_password
@@ -16,6 +16,7 @@
     password: "{{ master_ctl_password }}"
     http_method: get
     path: securetoken-generate
+  delegate_to: localhost
   register: authtoken
 
 - debug: msg="Recieved Authentication {{ authtoken.obj.auth_token }} from {{ master_ctl_ip }}"

@@ -30,6 +30,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `se_version` | No | `latest` | Version of the Avi Service Engine package you want to deploy. |
 | `se_image` | No | `avinetworks/se:{{ se_version }}` | Full name of the service engine image. |
 | `dpdk` | No | false | When set to true performs dpdk installation. |
+| `inband_mgmt` | No | false | Enables inband management interface for this Service Engine (i.e. Use Management interface for data traffic as well). | 
 | `se_cores` | No | `{{ ansible_processor_cores * ansible_processor_count }}` | How many cores the service engine will use. |
 | `se_memory_gb` | No | `{{ ansible_memtotal_mb / 1024 }}` | How much memory the service engine will use.  |
 | `destination_disk` | No | auto-detect based on `ansible_mounts` largest sized disk | The disk that the service engine data will be installed |
@@ -37,6 +38,8 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `se_disk_gb` | No | `10` | The size of the disk that will be used by service engine data. |
 | `se_logs_disk_path` | No | `None` | The path that the service engine log data will be stored. |
 | `se_logs_disk_gb` | No | `None` | The size of the disk that will be used by log data. |
+| `fresh_install` | No | `false` | Erases any pre-existing directories associated with the service engine. |
+| `skip_requirements` | No | `false` | Skips any requirements for disk space, ram, and cpu. |
 | `mounts_extras` | No | `[]` | Extra mounting points to be used by the service engine. <br>No need to include the `-v` |
 | `env_variables_extras` | No | `[]` | Extra environment variables to be used by the service engine. <br>No need to include `-e` |
 

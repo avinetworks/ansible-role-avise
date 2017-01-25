@@ -7,6 +7,9 @@
   include: os/centos.yml
   when: ansible_distribution == "CentOS"
 
+- name: Avi SE | Prepare System
+  include: prepare.yml
+
 - name: Avi SE | Perform Docker tasks
   include: docker.yml
 

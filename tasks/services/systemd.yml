@@ -7,7 +7,7 @@
   register: avise_service
   when: se_version|version_compare('17.0.0', '<')
 
-- name: Avi SE | Services | systemd | 17.x+ | Deploy the avise service
+- name: Avi SE | Services | systemd | 17.x | Deploy the avise service
   copy:
     src: systemd/avise.service
     dest: /etc/systemd/system/avise.service

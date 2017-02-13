@@ -6,7 +6,7 @@
     - name: Avi SE | Services | Install the Avi SE service
       include: "initd.yml"
       when: ansible_service_mgr != "systemd"
-  when: se_version|version_compare('17.0.0', '<')
+  when: se_version|version_compare('17.0.0', '<') or se_version == "latest"
 
 - name: Avi SE | Services | Install the Avi SE service
   include: "{{ ansible_service_mgr }}.yml"

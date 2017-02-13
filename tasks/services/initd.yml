@@ -6,7 +6,7 @@
 - name: Avi SE | Services | init.d | 16.x | Deploy the avise service
   template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
   register: avise_service
-  when: se_version|version_compare('17.0.0', '<')
+  when: se_version|version_compare('17.0.0', '<') or se_version == "latest"
 
 - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
   copy: src=init/avise dest=/etc/init.d/avise mode=0755

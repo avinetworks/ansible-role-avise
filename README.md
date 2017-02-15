@@ -16,13 +16,22 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
   `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
-These variables are for default or bare-metal deployment.   
+
+### General Variables (apply to all deployment modes)
 | Variable | Required | Default | Comments |
 |-----------------------|----------|-----------|---------|
+| `autoregister` | No | `true` | Autoregisters the service engine to the specified controller. |
 | `master_ctl_ip` | Yes | `None` | The IP address of the controller. |
 | `master_ctl_username` | Yes | `None` | The username to login into controller api. <br>**Not required when `autoregister: false`** |
 | `master_ctl_password` | Yes | `None` | The passowrd to login into the controller api. <br>**Not required when `autoregister: false`** |
-| `autoregister` | No | `true` | Autoregisters the service engine to the specified controller. |
+| `cloud_name` | No | `Default-Cloud` | Name of cloud the SE should auto-register with. |
+| `tenant` | No | `admin` | Name of tenant the SE should auto-register with.
+| `skip_requirements` | No | `false` | Skips any requirements for disk space, ram, and cpu. |
+
+### Default Deployment Variables (bare-metal/vm)
+These variables are for default or bare-metal deployment.   
+| Variable | Required | Default | Comments |
+|-----------------------|----------|-----------|---------|
 | `package_deploy` | No | `false` | Set to true to deploy via package. |
 | `package_source` | No | `se_docker.tgz` | Source location of the docker tgz |
 | `package_dest` | No | `/tmp/se_docker.tgz` | Destination location on the remote server |
@@ -39,7 +48,6 @@ These variables are for default or bare-metal deployment.
 | `se_logs_disk_path` | No | `None` | The path that the service engine log data will be stored. |
 | `se_logs_disk_gb` | No | `None` | The size of the disk that will be used by log data. |
 | `fresh_install` | No | `false` | Erases any pre-existing directories associated with the service engine. |
-| `skip_requirements` | No | `false` | Skips any requirements for disk space, ram, and cpu. |
 | `mounts_extras` | No | `[]` | Extra mounting points to be used by the service engine. <br>No need to include the `-v` |
 | `env_variables_extras` | No | `[]` | Extra environment variables to be used by the service engine. <br>No need to include `-e` |
 
@@ -50,9 +58,6 @@ These are only marked required, for when you are using CSP Deployment.
 | `csp_deploy` | Yes | `false` | Set to true if deploying on CSP. |
 | `csp_user` | Yes | `None` | Username that will be used to connect to the CSP server. |
 | `csp_password` | Yes | `None` | Password required to authenticate the user. |
-| `master_ctl_ip` | Yes | `None` | IP address of the controller. |
-| `master_ctl_username` | Yes | `None` | Username to login into controller api. |
-| `master_ctl_password` | Yes | `None` | Passowrd to login into the controller api. |
 | `csp_se_qcow_image_file` | No | `se.qcow` | Relative or absolute location of the SE qcow. |
 | `csp_se_mgmt_ip` | Yes | `None` | IP of the SE on the management network. |
 | `csp_se_mgmt_mask` | Yes | `None` | Subnet mask that the SE will require. |

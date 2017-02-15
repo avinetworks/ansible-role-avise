@@ -1,7 +1,7 @@
 ---
 - name: Avi SE | CSP | Service deploy | Check if service already exists
   uri:
-    url: "https://{{ inventory_hostname }}/api/running/services/service/{{ csp_service_name }}"
+    url: "https://{{ inventory_hostname }}/api/running/services/service/{{ csp_se_service_name }}"
     method: GET
     user: "{{ csp_user }}"
     password: "{{ csp_password }}"
@@ -33,13 +33,13 @@
     body_format: json
     body:
       service:
-        disk_size: "{{ csp_disk_size|int }}"
-        name: "{{ csp_service_name }}"
+        disk_size: "{{ csp_se_disk_size|int }}"
+        name: "{{ csp_se_service_name }}"
         power: 'on'
         iso_name: "{{ csp_se_qcow_image_name }}"
-        day0_filename: "{{ csp_se_qcow_metafile_name }}"
-        numcpu: "{{ csp_num_cpu|int }}"
-        memory: "{{ csp_memory|int }}"
+        day0_filename: "{{ csp_se_metafile_name }}"
+        numcpu: "{{ csp_se_num_cpu|int }}"
+        memory: "{{ csp_se_memory|int }}"
         vnics:
           vnic:
             - nic: '0'
@@ -47,7 +47,7 @@
               tagged: 'false'
               network_name: enp1s0f0
     return_content: true
-  failed_when: false
-  register: csp_avi_controller_service
+  register: csp_avi_se_service
+  failed_when: csp_avi_se_service.status != 201
   delegate_to: localhost
   when: csp_se_service_exists.status != 200

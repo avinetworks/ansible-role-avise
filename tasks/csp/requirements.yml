@@ -13,7 +13,6 @@
     - csp_se_mgmt_mask
     - csp_se_default_gw
     - master_ctl_ip
-    - csp_se_tenant_uuid
     - csp_se_disk_size
     - csp_se_service_name
     - csp_se_num_cpu

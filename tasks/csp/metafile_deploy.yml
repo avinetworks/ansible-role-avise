@@ -1,7 +1,7 @@
 ---
 - name: Avi SE | CSP | Metafile deploy | Setting the Avi metafile name
   set_fact:
-    csp_se_metafile_name: avi_meta_{{ csp_service_name }}.yml
+    csp_se_metafile_name: avi_meta_{{ csp_se_service_name }}.yml
 
 - name: Avi SE | CSP | Metafile deploy | Information
   debug: msg="Your metafile has been named {{ csp_se_metafile_name }}"
@@ -29,7 +29,7 @@
 
 - block:
     - name: Avi SE | CSP | Metafile deploy | Autoregistration
-      include: autoregistration.yml
+      include: ../autoregistration.yml
       when: autoregister
     - name: Avi SE | CSP | Autoregistration | Set csp_se_authtoken to auth_token
       set_fact:
@@ -37,11 +37,11 @@
       when: autoregister
     - name: Avi SE | CSP | Metafile deploy | Create metafile content
       template:
-        src: avi_meta_se.j2
+        src: csp/avi_meta_se.j2
         dest: /tmp/{{ csp_se_metafile_name }}
       delegate_to: localhost
       register: avi_metafile
     - name: Avi SE | CSP | Metafile deploy | Deploy metafile to the CSP device
-      shell: sshpass -p {{ csp_password }} scp {{ avi_metafile.path }} {{ csp_user }}@{{ inventory_hostname }}:/osp/repository
+      shell: sshpass -p {{ csp_password }} scp /tmp/{{ csp_se_metafile_name }} {{ csp_user }}@{{ inventory_hostname }}:/osp/repository
       delegate_to: localhost
   when: avi_metafile_exists.status != 200

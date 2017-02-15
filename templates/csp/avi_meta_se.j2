@@ -2,7 +2,9 @@ avi.mgmt-ip.SE: "{{ csp_se_mgmt_ip }}"
 avi.mgmt-mask.SE: "{{ csp_se_mgmt_mask }}"
 avi.default-gw.SE: "{{ csp_se_default_gw }}"
 AVICNTRL: "{{ master_ctl_ip }}"
+{% if csp_se_authtoken != None -%}
 AVICNTRL_AUTHTOKEN: "{{ csp_se_authtoken }}"
+{% endif %}
 {% if csp_se_tenant_uuid != None -%}
 AVITENANT_UUID: "{{ csp_se_tenant_uuid }}"
 {% endif %}

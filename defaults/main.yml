@@ -36,6 +36,8 @@ csp_se_memory: 16
 skip_requirements: false
 master_ctl_ip: ~
 autoregister: true
+cloud_name: Default-Cloud
+tenant: admin
 
 ### default deployment parameters ###
 fresh_install: false

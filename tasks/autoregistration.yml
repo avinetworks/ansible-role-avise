@@ -20,7 +20,3 @@
   register: authtoken
 
 - debug: msg="Recieved Authentication {{ authtoken.obj.auth_token }} from {{ master_ctl_ip }}"
-
-- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
-  set_fact:
-    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ authtoken.obj.auth_token }}']"

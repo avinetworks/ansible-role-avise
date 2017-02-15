@@ -1,6 +1,9 @@
 ---
 # Variable defaults file for avinetworks.avise
 
+# sets the type of deployment
+deploy_type: default
+
 # parameters for use when deploying as package
 package_deploy: false
 package_source: se_docker.tgz
@@ -15,7 +18,6 @@ se_image: "avinetworks/se:{{ se_version }}"
 
 
 # parameters for the CSP deployment
-csp_deploy: false
 csp_user: ~
 csp_password: ~
 csp_se_qcow_image_file: se.qcow
@@ -31,6 +33,13 @@ csp_se_num_cpu: 4
 csp_se_memory: 16
 
 # standard parameters
+skip_requirements: false
+master_ctl_ip: ~
+autoregister: true
+
+### default deployment parameters ###
+fresh_install: false
+inband_mgmt: false
 se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb / 1024 }}"
 destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
@@ -38,12 +47,6 @@ se_disk_path: "{{ destination_disk }}/opt/avi/se/data"
 se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
-fresh_install: false
-skip_requirements: false
-inband_mgmt: false
-master_ctl_ip: ~
-autoregister: true
-
 # If dpdk set to true, will configure host for DPDK
 dpdk: false
 

@@ -18,6 +18,8 @@
     - csp_se_service_name
     - csp_se_num_cpu
     - csp_se_memory
+  when: not skip_requirements
+
 
 - name: Avi SE | CSP | Requirements | Validate Sizing
   assert:
@@ -31,3 +33,4 @@
       msg: "Must have 1GB or more memory"
     - expr: csp_se_disk_size|int >= 10
       msg: "Must have 10GB or more disk size"
+  when: not skip_requirements

@@ -1,7 +1,7 @@
 ---
 # We must do this step first just in case we need to override defaults from the supplied package
 - name: Avi SE | Docker | Package Deploy
-  include: docker/package_deploy.yml
+  include: package_deploy.yml
   when: package_deploy
 
 - name: Avi SE | Docker | Check if specified image already exists.
@@ -10,11 +10,11 @@
   register: docker_match
 
 - name: Avi SE | Docker | Docker Hub
-  include: docker/docker_hub.yml
+  include: docker_hub.yml
   when: docker_repo == None and not package_deploy
 
 - name: Avi SE | Docker | Custom Repo
-  include: docker/custom_repo.yml
+  include: custom_repo.yml
   when: docker_repo != None and not package_deploy
 
 - name: Avi SE | Service | Set service fact for deploy

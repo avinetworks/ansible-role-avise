@@ -16,7 +16,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
   `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
-
+These variables are for default or bare-metal deployment.   
 | Variable | Required | Default | Comments |
 |-----------------------|----------|-----------|---------|
 | `master_ctl_ip` | Yes | `None` | The IP address of the controller. |
@@ -30,7 +30,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `se_version` | No | `latest` | Version of the Avi Service Engine package you want to deploy. |
 | `se_image` | No | `avinetworks/se:{{ se_version }}` | Full name of the service engine image. |
 | `dpdk` | No | false | When set to true performs dpdk installation. |
-| `inband_mgmt` | No | false | Enables inband management interface for this Service Engine (i.e. Use Management interface for data traffic as well). | 
+| `inband_mgmt` | No | false | Enables inband management interface for this Service Engine (i.e. Use Management interface for data traffic as well). |
 | `se_cores` | No | `{{ ansible_processor_cores * ansible_processor_count }}` | How many cores the service engine will use. |
 | `se_memory_gb` | No | `{{ ansible_memtotal_mb / 1024 }}` | How much memory the service engine will use.  |
 | `destination_disk` | No | auto-detect based on `ansible_mounts` largest sized disk | The disk that the service engine data will be installed |
@@ -42,6 +42,28 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `skip_requirements` | No | `false` | Skips any requirements for disk space, ram, and cpu. |
 | `mounts_extras` | No | `[]` | Extra mounting points to be used by the service engine. <br>No need to include the `-v` |
 | `env_variables_extras` | No | `[]` | Extra environment variables to be used by the service engine. <br>No need to include `-e` |
+
+### CSP Deployment Variables
+These are only marked required, for when you are using CSP Deployment.   
+| Variable | Required | Default | Comments |
+|-----------------------|----------|-----------|---------|
+| `csp_deploy` | Yes | `false` | Set to true if deploying on CSP. |
+| `csp_user` | Yes | `None` | Username that will be used to connect to the CSP server. |
+| `csp_password` | Yes | `None` | Password required to authenticate the user. |
+| `master_ctl_ip` | Yes | `None` | IP address of the controller. |
+| `master_ctl_username` | Yes | `None` | Username to login into controller api. |
+| `master_ctl_password` | Yes | `None` | Passowrd to login into the controller api. |
+| `csp_se_qcow_image_file` | No | `se.qcow` | Relative or absolute location of the SE qcow. |
+| `csp_se_mgmt_ip` | Yes | `None` | IP of the SE on the management network. |
+| `csp_se_mgmt_mask` | Yes | `None` | Subnet mask that the SE will require. |
+| `csp_se_default_gw` | Yes | `None` | Default gateway for the SE. |
+| `csp_se_authtoken` | No | Auto | Token which will authenticate the SE to the controller. |
+| `csp_se_tenant_uuid` | No | `None` | UUID of the Tenant the SE will use. If left as `None` will use Admin tenant. |
+| `csp_se_disk_size` | No | `10` | Amount of disk space in GB for the SE. |
+| `csp_se_service_name` | No | `avi-se` | Name of the service to be created on the CSP. |
+| `csp_se_num_cpu` | No | `1` | Number of CPUs to be allocated to the SE. |
+| `csp_se_memory` | No | `1` | Amount of memory in GB allocated to the SE. |
+
 
 ### Parameter Override Variables
 However, you are able to provide these parameters another way. Using the following variables. This will allow the user to customize all values.  
@@ -90,6 +112,31 @@ avinetworks.avisdk
       se_cores: 4
       se_memory_gb: 12
 ```
+
+### CSP Deployment Example
+```
+
+---
+- hosts: csp_devices
+  gather_facts: false
+  roles:
+    - role: avinetworks.avise
+      csp_deploy: true
+      csp_user: admin
+      csp_password: password
+      master_ctl_ip: 10.128.2.20
+      master_ctl_username: admin
+      master_ctl_password: password
+      csp_se_qcow_image_file: avi-se.qcow2
+      csp_se_mgmt_ip: 10.128.2.20
+      csp_se_mgmt_mask: 255.255.255.0
+      csp_se_default_gw: 10.128.2.1
+      csp_se_service_name: avi-controller
+      csp_se_disk_size: 10
+      csp_se_num_cpu: 2
+      csp_se_memory: 4
+```
+
 ### Minimum Example
 ```
 

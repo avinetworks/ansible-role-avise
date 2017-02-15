@@ -13,6 +13,23 @@ docker_repo_password: ~
 se_version: latest
 se_image: "avinetworks/se:{{ se_version }}"
 
+
+# parameters for the CSP deployment
+csp_deploy: false
+csp_user: ~
+csp_password: ~
+csp_se_qcow_image_file: se.qcow
+csp_se_qcow_image_name: "{{ csp_se_qcow_image_file|basename }}"
+csp_se_mgmt_ip: ~
+csp_se_mgmt_mask: ~
+csp_se_default_gw: ~
+csp_se_authtoken: ~
+csp_se_tenant_uuid: ~
+csp_se_disk_size: 64
+csp_se_service_name: avi-se
+csp_se_num_cpu: 4
+csp_se_memory: 16
+
 # standard parameters
 se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb / 1024 }}"

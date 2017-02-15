@@ -1,4 +1,9 @@
 ---
+- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
+  set_fact:
+    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ authtoken.obj.auth_token }}']"
+  when: autoregister
+
 - block:
     - name: Avi SE | Services | Install the Avi SE service
       include: "systemd.yml"

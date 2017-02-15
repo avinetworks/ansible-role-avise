@@ -1,0 +1,25 @@
+---
+- name: Avi SE | Check minimum requirements
+  include: docker/requirements.yml
+
+- name: Avi SE | Perform CentOS Tasks
+  include: docker/os/centos.yml
+  when: ansible_distribution == "CentOS"
+
+- name: Avi SE | Prepare | Disable and stop Firewalld
+  service: name="firewalld" state="stopped" enabled="no"
+  when: ansible_os_family == "RedHat"
+
+- name: Avi SE | Perform Docker tasks
+  include: docker/main.yml
+
+- name: Avi SE | Install DPDK
+  include: docker/dpdk.yml
+  when: dpdk
+
+- name: Avi SE | Perform Autoregistration
+  include: autoregistration.yml
+  when: autoregister
+
+- name: Avi SE | Install the Avi SE service
+  include: docker/services/main.yml

@@ -1,31 +1,7 @@
 ---
 # tasks file for avinetworks.avise
-- name: Avi Controller | CSP Deployment
-  include: csp_deploy.yml
-  when: csp_deploy
 
-- block:
-    - name: Avi SE | Check minimum requirements
-      include: requirements.yml
-
-    - name: Avi SE | Perform CentOS Tasks
-      include: os/centos.yml
-      when: ansible_distribution == "CentOS"
-
-    - name: Avi SE | Prepare System
-      include: prepare.yml
-
-    - name: Avi SE | Perform Docker tasks
-      include: docker.yml
-
-    - name: Avi SE | Install DPDK
-      include: dpdk.yml
-      when: dpdk
-
-    - name: Avi SE | Perform Autoregistration
-      include: autoregistration.yml
-      when: autoregister
-
-    - name: Avi SE | Install the Avi SE service
-      include: services/main.yml
-  when: not csp_deploy
+# This task will appropriately start the selected type of deployment.
+# It was added to prevent mass "skipped" messages when deploying Avi.
+- name: Avi SE | Deployment
+  include: "{{ deploy_type }}_deploy.yml"

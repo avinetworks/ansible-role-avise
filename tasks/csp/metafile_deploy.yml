@@ -28,6 +28,11 @@
   when: avi_metafile_exists.status == 200
 
 - block:
+    - name: Avi SE | CSP | Metafile deploy | Autoregistration
+      include: autoregistration.yml
+    - name: Avi SE | CSP | Autoregistration | Set csp_se_authtoken to auth_token
+      set_fact:
+        csp_se_authtoken: "{{ authtoken.obj.auth_token }}"
     - name: Avi SE | CSP | Metafile deploy | Create metafile content
       template:
         src: avi_meta_se.j2

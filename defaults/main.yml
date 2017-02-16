@@ -31,7 +31,21 @@ csp_se_disk_size: 64
 csp_se_service_name: avi-se
 csp_se_num_cpu: 4
 csp_se_memory: 16
-
+csp_vnics:
+  - nic: "0"
+    type: access
+    tagged: "false"
+    network_name: enp1s0f0
+  - nic: 1
+    type: passthrough
+    passthrough_mode: sriov
+    vlan: 200
+    network_name: enp7s0f0
+  - nic: 2
+    type: passthrough
+    passthrough_mode: sriov
+    vlan: 201
+    network_name: enp7s0f1
 # standard parameters
 skip_requirements: false
 master_ctl_ip: ~

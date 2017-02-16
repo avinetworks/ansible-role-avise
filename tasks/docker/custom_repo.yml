@@ -14,4 +14,5 @@
   shell: "docker pull {{ docker_repo }}/{{ se_image }}"
   register: load_docker_repo
   changed_when: "'Status: Image is up to date' not in load_docker_repo.stdout"
+  notify: Avi SE | Services | systemd | Restart the avise service
   when: docker_match.stdout == "" or se_version == "latest"

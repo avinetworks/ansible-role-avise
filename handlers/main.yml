@@ -1,0 +1,4 @@
+---
+- name: Avi SE | Services | systemd | Restart the avise service
+  systemd: daemon_reload=yes name=avise enabled=yes state=restarted
+  when: not start_service.changed

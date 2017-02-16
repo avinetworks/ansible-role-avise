@@ -16,8 +16,8 @@
 - name: Avi SE | Requirements | Avi Service Engine needs 1 or more cores.
   assert:
     that:
-      - "max_cores >= 1"
-      - "se_cores <= max_cores"
+      - "max_cores|int >= 1"
+      - "se_cores|int <= max_cores|int"
 
 - name: Avi SE | Requirements | Set the ansible_memtotal_gb and se_memory_mb var
   set_fact:
@@ -26,9 +26,9 @@
 - name: Avi SE | Requirements | Avi service Engine needs minimum 1GB memory and 1GB memory per core.
   assert:
     that:
-      - "ansible_memtotal_mb >= 1024"
-      - "se_memory_gb <= ansible_memtotal_gb"
-      - "se_memory_gb >= se_cores"
+      - "ansible_memtotal_mb|int >= 1024"
+      - "se_memory_gb|int <= ansible_memtotal_gb|int"
+      - "se_memory_gb|int >= se_cores|int"
   when: not skip_requirements
 
 - name: Avi SE | Requirements | Fresh install steps

@@ -60,8 +60,7 @@
 
 - name: Avi SE | Docker | Stop and Remove the container if it's not the desired version.
   shell: "docker stop {{ item }} && docker rm -f {{ item }}"
-  with_items:
-    - "{{ running_se_containers.stdout_lines }}"
   when:
     - item not in desired_running.stdout_lines
-    - stopped_service.changed
+  with_items:
+    - "{{ running_se_containers.stdout_lines }}"

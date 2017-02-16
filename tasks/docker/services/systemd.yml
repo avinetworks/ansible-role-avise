@@ -5,6 +5,7 @@
     dest: /etc/systemd/system/avise.service
     mode: 0644
   register: avise_service
+  notify: Avi SE | Services | systemd | Restart the avise service
   when: se_version|version_compare('17.0.0', '<') or se_version == "latest"
 
 - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
@@ -13,14 +14,10 @@
     dest: /etc/systemd/system/avise.service
     mode: 0644
   register: avise_service
+  notify: Avi SE | Services | systemd | Restart the avise service
   when: se_version|version_compare('17.0.0', '>=')
 
 # Standard steps
-- name: Avi SE | Services | systemd | Restart the avise service
-  systemd: daemon_reload=yes name=avise enabled=yes state=restarted
-  when: avise_service.changed or
-        load_docker_repo.changed or
-        load_docker_hub.changed
-
 - name: Avi SE | Services | systemd | Start the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=started
+  register: start_service

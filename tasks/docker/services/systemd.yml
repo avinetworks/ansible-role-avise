@@ -6,7 +6,9 @@
     mode: 0644
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
-  when: se_version|version_compare('17.0.0', '<') or se_version == "latest"
+  when:
+    - se_version|version_compare('17.0.0', '<') or se_version == "latest"
+    - redeploy_se
 
 - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
   copy:
@@ -15,7 +17,9 @@
     mode: 0644
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
-  when: se_version|version_compare('17.0.0', '>=')
+  when:
+    - se_version|version_compare('17.0.0', '>=')
+    - redeploy_se
 
 # Standard steps
 - name: Avi SE | Services | systemd | Ensure the service has been started

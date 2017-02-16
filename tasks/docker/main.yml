@@ -42,6 +42,10 @@
   changed_when: false
   register: desired_running
 
+- name: Avi SE | Docker | Determine if we need to redeploy
+  set_fact:
+    redeploy_se: "{{ desired_running.stdout == '' }}"
+
 - name: Avi SE | Check for existing avise service
   stat:
     path: "{{ item }}"
@@ -54,7 +58,7 @@
   service: name=avise enabled=no state=stopped
   when:
     - "{{ item.stat.exists }} == true"
-    - desired_running.stdout == ""
+    - redeploy_se
   with_items: "{{ service_installed.results }}"
 
 

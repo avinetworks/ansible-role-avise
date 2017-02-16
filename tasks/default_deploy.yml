@@ -19,7 +19,9 @@
 
 - name: Avi SE | Perform Autoregistration
   include: autoregistration.yml
-  when: autoregister
+  when:
+    - autoregister
+    - redeploy_se
 
 - name: Avi SE | Install the Avi SE service
   include: docker/services/main.yml

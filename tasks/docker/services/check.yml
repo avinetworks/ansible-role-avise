@@ -38,7 +38,7 @@
 - name: Avi SE | Docker | Services | Capture AVICOOKIE from docker run params
   set_fact:
     existing_avicookie: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
-  when: avise_service_present is defined
+  when: existing_run_params is defined
 
 - name: Avi SE | Autoregistration | Append the token to the docker environment variables.
   set_fact:
@@ -49,10 +49,3 @@
   set_fact:
     docker_run_changed: "{{ existing_run_params != docker_run_params }}"
   when: existing_run_params is defined
-
-- name: Avi SE | Docker | Services | Compare docker run parameters
-  set_fact:
-    docker_run_changed: true
-  when: existing_run_params is not defined
-
-- debug: var=docker_run_changed

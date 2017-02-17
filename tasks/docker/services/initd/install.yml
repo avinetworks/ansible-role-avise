@@ -7,17 +7,13 @@
   template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
   register: avise_service
   notify: Avi SE | Services | init.d | Restart the avise_watcher service
-  when:
-    - old_service
-    - docker_run_changed
+  when: old_service
 
 - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
   copy: src=init/avise dest=/etc/init.d/avise mode=0755
   register: avise_service
   notify: Avi SE | Services | init.d | Restart the avise_watcher service
-  when:
-    - new_service
-    - docker_run_changed
+  when: new_service
 
 - name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script
   copy: src=init/avise_watcher.sh dest=/etc/init.d/avise_watcher.sh mode=0755

@@ -6,9 +6,7 @@
     mode: 0644
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
-  when:
-    - old_service
-    - docker_run_changed
+  when: old_service
 
 - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
   copy:
@@ -17,9 +15,7 @@
     mode: 0644
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
-  when:
-    - new_service
-    - docker_run_changed
+  when: new_service
 
 # Standard steps
 - name: Avi SE | Services | systemd | Ensure the service has been started

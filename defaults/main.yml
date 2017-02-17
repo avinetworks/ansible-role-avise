@@ -4,6 +4,13 @@
 # sets the type of deployment
 deploy_type: default
 
+# standard parameters
+skip_requirements: false
+master_ctl_ip: ~
+autoregister: true
+cloud_name: Default-Cloud
+tenant: admin
+
 # parameters for use when deploying as package
 package_deploy: false
 package_source: se_docker.tgz
@@ -45,12 +52,6 @@ csp_vnics:
     passthrough_mode: sriov
     vlan: 201
     network_name: enp7s0f1
-# standard parameters
-skip_requirements: false
-master_ctl_ip: ~
-autoregister: true
-cloud_name: Default-Cloud
-tenant: admin
 
 ### default deployment parameters ###
 fresh_install: false

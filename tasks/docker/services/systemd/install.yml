@@ -7,8 +7,8 @@
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
   when:
-    - se_version|version_compare('17.0.0', '<') or se_version == "latest"
-    - redeploy_se
+    - old_service
+    - docker_run_changed
 
 - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
   copy:
@@ -18,8 +18,8 @@
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
   when:
-    - se_version|version_compare('17.0.0', '>=')
-    - redeploy_se
+    - new_service
+    - docker_run_changed
 
 # Standard steps
 - name: Avi SE | Services | systemd | Ensure the service has been started

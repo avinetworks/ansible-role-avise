@@ -7,7 +7,7 @@
   template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
   register: avise_service
   when:
-    - se_version|version_compare('17.0.0', '<') or se_version == "latest"
+    - old_service
     - redeploy_se
 
 - name: Avi SE | Services | init.d | 17.x | Deploy the avise service

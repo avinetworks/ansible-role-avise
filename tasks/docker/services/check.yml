@@ -1,0 +1,58 @@
+---
+- block:
+    - name: Avi SE | Docker | Services | systemd | Include vars
+      include_vars: "services/systemd.yml"
+      when: ansible_service_mgr == "systemd"
+    - name: Avi SE | Docker | Services | init.d | Include vars
+      include_vars: "services/initd.yml"
+      when: ansible_service_mgr != "systemd"
+    - name: Avi SE | Docker | Services | Check for exisitng avise service
+      stat: path={{ service_file }}
+      register: avise_service_exists
+    - name: Avi SE | Docker | Services | Read existing service's docker run configuration
+      shell: cat {{ avise_service_exists.stat.path }} | sed -n -e 's/^.*docker run //p'
+      register: existing_run_params_raw
+      changed_when: false
+      when: avise_service_exists.stat.exists
+    - set_fact:
+        existing_run_params: "{{ existing_run_params_raw.stdout }}"
+        avise_service_present: "{{ avise_service_exists.stat.exists }}"
+      when: avise_service_exists.stat.exists
+  when: old_service
+
+- block:
+    - name: Avi SE | Docker | Services | Check for existing avise service
+      stat: path=/usr/sbin/avise
+      register: avise_service_exists
+    - name: Avi SE | Docker | Services | Read existing service's docker run configuration
+      shell: cat /usr/sbin/avise | sed -n -e 's/^docker_run_params=//p' | tr -d '"'
+      register: existing_run_params_raw
+      changed_when: false
+      when: avise_service_exists.stat.exists
+    - set_fact:
+        existing_run_params: "{{ existing_run_params_raw.stdout }}"
+        avise_service_present: "{{ avise_service_exists.stat.exists }}"
+      when: avise_service_exists.stat.exists
+  when: new_service
+
+- name: Avi SE | Docker | Services | Capture AVICOOKIE from docker run params
+  set_fact:
+    existing_avicookie: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
+  when: avise_service_present is defined
+
+- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
+  set_fact:
+    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ existing_avicookie }}']"
+  when: existing_avicookie is defined
+
+- name: Avi SE | Docker | Services | Compare docker run parameters
+  set_fact:
+    docker_run_changed: "{{ existing_run_params != docker_run_params }}"
+  when: existing_run_params is defined
+
+- name: Avi SE | Docker | Services | Compare docker run parameters
+  set_fact:
+    docker_run_changed: true
+  when: existing_run_params is not defined
+
+- debug: var=docker_run_changed

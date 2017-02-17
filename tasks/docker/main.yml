@@ -41,30 +41,3 @@
   shell: "docker ps -q -f ancestor={{ docker_image.stdout }}"
   changed_when: false
   register: desired_running
-
-- name: Avi SE | Docker | Determine if we need to redeploy
-  set_fact:
-    redeploy_se: "{{ desired_running.stdout == '' }}"
-
-- name: Avi SE | Check for existing avise service
-  stat:
-    path: "{{ item }}"
-  register: service_installed
-  with_items:
-    - /etc/systemd/system/avise.service
-    - /etc/init.d/avise
-
-- name: Avi SE | Stop avise service
-  service: name=avise enabled=no state=stopped
-  when:
-    - "{{ item.stat.exists }} == true"
-    - redeploy_se
-  with_items: "{{ service_installed.results }}"
-
-
-- name: Avi SE | Docker | Stop and Remove the container if it's not the desired version.
-  shell: "docker stop {{ item }} && docker rm -f {{ item }}"
-  when:
-    - item not in desired_running.stdout_lines
-  with_items:
-    - "{{ running_se_containers.stdout_lines }}"

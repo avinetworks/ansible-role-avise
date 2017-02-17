@@ -16,7 +16,6 @@ docker_repo_password: ~
 se_version: latest
 se_image: "avinetworks/se:{{ se_version }}"
 
-
 # parameters for the CSP deployment
 csp_user: ~
 csp_password: ~

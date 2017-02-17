@@ -29,13 +29,10 @@
     - avise_service_exists is not defined
     - autoregister
 
-- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
+- name: Avi SE | Docker | Services | Append the token to the docker environment variables.
   set_fact:
-    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ authtoken.obj.auth_token }}']"
-  when:
-    - autoregister
-    - avise_service_exists is not defined
-    - authtoken is defined
+    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ avi_token }}']"
+  when: avi_token is defined
 
 - name: Avi SE | Install the Avi SE service
   include: docker/services/install.yml

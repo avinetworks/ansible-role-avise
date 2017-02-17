@@ -37,13 +37,8 @@
 
 - name: Avi SE | Docker | Services | Capture AVICOOKIE from docker run params
   set_fact:
-    existing_avicookie: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
+    avi_token: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
   when: existing_run_params is defined
-
-- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
-  set_fact:
-    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ existing_avicookie }}']"
-  when: existing_avicookie is defined
 
 - name: Avi SE | Docker | Services | Compare docker run parameters
   set_fact:

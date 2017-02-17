@@ -5,7 +5,9 @@
     dest: /etc/systemd/system/avise.service
     mode: 0644
   register: avise_service
-  notify: Avi SE | Services | systemd | Restart the avise service
+  notify:
+    - Avi SE | Services | systemd | Daemon reload
+    - Avi SE | Services | Restart the avise service
   when: old_service
 
 - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
@@ -14,5 +16,7 @@
     dest: /etc/systemd/system/avise.service
     mode: 0644
   register: avise_service
-  notify: Avi SE | Services | systemd | Restart the avise service
+  notify:
+    - Avi SE | Services | systemd | Daemon reload
+    - Avi SE | Services | Restart the avise service
   when: new_service

@@ -5,5 +5,16 @@
   shell: "docker pull {{ se_image }}"
   register: load_docker_hub
   changed_when: "'Status: Image is up to date' not in load_docker_hub.stdout"
-  notify: Avi SE | Services | systemd | Restart the avise service
-  when: docker_match.stdout == "" or se_version == "latest"
+  notify: Avi SE | Services | Restart the avise service
+  when:
+    - docker_match.stdout == "" or se_version == "latest"
+    - old_service
+
+- name: Avi SE | Docker | Load the image from Docker Hub
+  shell: "docker pull {{ se_image }}"
+  register: load_docker_hub
+  changed_when: "'Status: Image is up to date' not in load_docker_hub.stdout"
+  notify: Avi SE | Services | Restart the avise service
+  when:
+    - docker_match.stdout == "" or se_version == "latest"
+    - new_service

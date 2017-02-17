@@ -1,9 +1,9 @@
 ---
 # handlers for avinetworks.avise
-- name: Avi SE | Services | systemd | Restart the avise service
-  systemd: daemon_reload=yes name=avise enabled=yes state=restarted
+- name: Avi SE | Services | systemd | Daemon reload
+  systemd: daemon_reload=yes name=avise
 
-- name: Avi SE | Services | upstart | Restart the avise service
+- name: Avi SE | Services | Restart the avise service
   service: name=avise enabled=yes state=restarted
 
 - name: Avi SE | Services | init.d | Restart the avise_watcher service

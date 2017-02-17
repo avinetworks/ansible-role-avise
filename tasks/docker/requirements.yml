@@ -5,30 +5,20 @@
   register: docker
   changed_when: false
 
-- name: Avi SE | Requirements | Check if Master Controller IP is defined.
-  fail: msg="Variable master_ctl_ip is not defined"
-  when: master_ctl_ip == None
-
-- name: Avi SE | Requirements | Set maximum core count
+- name: Avi SE | Requirements | Set facts
   set_fact:
     max_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
-
-- name: Avi SE | Requirements | Avi Service Engine needs 1 or more cores.
-  assert:
-    that:
-      - "max_cores|int >= 1"
-      - "se_cores|int <= max_cores|int"
-
-- name: Avi SE | Requirements | Set the ansible_memtotal_gb and se_memory_mb var
-  set_fact:
     ansible_memtotal_gb: "{{ ansible_memtotal_mb / 1024 }}"
 
-- name: Avi SE | Requirements | Avi service Engine needs minimum 1GB memory and 1GB memory per core.
+- name: Avi SE | Requirements | Validate Parameters
   assert:
     that:
+      - "master_ctl_ip != None"
       - "ansible_memtotal_mb|int >= 1024"
       - "se_memory_gb|int <= ansible_memtotal_gb|int"
       - "se_memory_gb|int >= se_cores|int"
+      - "max_cores|int >= 1"
+      - "se_cores|int <= max_cores|int"
   when: not skip_requirements
 
 - name: Avi SE | Requirements | Fresh install steps

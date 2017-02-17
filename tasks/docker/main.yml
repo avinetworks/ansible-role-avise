@@ -17,15 +17,11 @@
   include: custom_repo.yml
   when: docker_repo != None and not package_deploy
 
-- name: Avi SE | Service | Set service fact for deploy
+# This section must go after package_deploy, as se_version is extracted from the output
+- name: Avi SE | Docker | Service | Set service fact for deploy
   set_fact:
     old_service: "{{ se_version|version_compare('17.0.0', '<') or se_version == 'latest' }}"
     new_service: "{{ se_version|version_compare('17.0.0', '>=') }}"
-
-- name: Avi SE | Docker | Check if specified image already exists.
-  shell: "docker images -q {{ se_image }}"
-  changed_when: false
-  register: docker_match
 
 - name: Avi SE | Docker | Get our desired docker image id.
   shell: "docker images -q {{ se_image }}"

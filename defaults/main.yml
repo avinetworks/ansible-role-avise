@@ -2,7 +2,7 @@
 # Variable defaults file for avinetworks.avise
 
 # sets the type of deployment
-deploy_type: default
+deploy_type: docker
 
 # standard parameters
 skip_requirements: false
@@ -65,6 +65,7 @@ se_logs_disk_path: ~
 se_logs_disk_gb: ~
 # If dpdk set to true, will configure host for DPDK
 dpdk: false
+dpdk_supported_nics: "82599|82598|X540|X710|XL710"
 
 # Mount variables which are sent to the docker container, these are used in the service templates.
 mounts_extras: []

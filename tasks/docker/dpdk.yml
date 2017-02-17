@@ -16,30 +16,32 @@
   service: name="NetworkManager" state="stopped" enabled="no"
   when: ansible_os_family == "RedHat"
 
-- name: Avi SE | DPDK | Configure DPDK Parameters
+- name: Avi SE | DPDK | Set facts
   set_fact:
-    dpdk_pre: >
-      rmmod igb_uio; rmmod rte_kni; modprobe uio; insmod /opt/avi/kmod/igb_uio.ko;
-      insmod /opt/avi/kmod/rte_kni.ko; mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*;
-      mount -t hugetlbfs nodev /mnt/huge
-  when: se_version < 16.3 and dpdk_pre is undefined
+    old_dpdk: "{{ se_version|version_compare('16.3.0', '<') }}"
+    new_dpdk: "{{ se_version|version_compare('16.3.0', '>=') }}"
+    klm_ver: "{{ ansible_kernel | regex_replace('-.*', '') }}"
 
-- name:
-  set_fact:
-    dpdk_pre: >
-      modprobe uio;
-      mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*; mount -t hugetlbfs nodev /mnt/huge
-  when: se_version >= 16.3 and dpdk_pre is undefined
+- block:
+    - name: Avi SE | DPDK | < 16.3 | Configure DPDK Pre Parameters
+      set_fact:
+        dpdk_pre: >
+          rmmod igb_uio; rmmod rte_kni; modprobe uio; insmod /opt/avi/kmod/igb_uio.ko;
+          insmod /opt/avi/kmod/rte_kni.ko; mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*;
+          mount -t hugetlbfs nodev /mnt/huge
+      when: old_dpdk
+    - name: Avi SE | DPDK | >= 16.3 | Configure DPDK Pre Parameters
+      set_fact:
+        dpdk_pre: >
+          modprobe uio;
+          mkdir -p /mnt/huge; umount /mnt/huge; rm /mnt/huge/*; mount -t hugetlbfs nodev /mnt/huge
+      when: new_dpdk
+  when: dpdk_pre is undefined
 
-- name:
+- name: Avi SE | DPDK | Configure DPDK Post Parameters
   set_fact:
     dpdk_post: "rmmod igb_uio; rmmod rte_kni; umount /mnt/huge"
   when: dpdk_post is undefined
-
-- name:
-  set_fact:
-    dpdk_supported_nics: "82599|82598|X540|X710|XL710"
-  when: dpdk_supported_nics is undefined
 
 - name: Avi SE | DPDK | Check for supported network interface cards"
   shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "{{ dpdk_supported_nics }}"
@@ -51,9 +53,6 @@
   with_items:
     - /tmp/dpdk_klms
     - /opt/avi/kmod
-
-- set_fact:
-    klm_ver: "{{ ansible_kernel | regex_replace('-.*', '') }}"
 
 - name: Avi SE | DPDK | Copy and Unarchive the DPDK KLMS
   unarchive: src=dpdk_klms.tar.gz dest=/tmp/dpdk_klms

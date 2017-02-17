@@ -1,9 +1,9 @@
 ---
-- name: Avi SE | Stop avise service
+- name: Avi SE | Docker | Cleanup | Stop avise service
   service: name=avise enabled=no state=stopped
   when: docker_run_changed and avise_service_present is defined
 
-- name: Avi SE | Docker | Stop and Remove the container if it's not the desired version.
+- name: Avi SE | Docker | Cleanup | Stop and Remove the container if it's not the desired version.
   shell: "docker stop {{ item }} && docker rm -f {{ item }}"
   when:
     - item not in desired_running.stdout_lines

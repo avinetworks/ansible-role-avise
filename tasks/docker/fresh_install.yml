@@ -5,7 +5,7 @@
     - name: Avi SE | Requirements | init.d | Stop the avise service for fresh install
       service: name=avise enabled=no state=stopped
   when: ansible_service_mgr == 'init' or
-    ( ansible_service_mgr != 'systemd' and se_version|version_compare('17.0.0', '<') )
+    ( ansible_service_mgr != 'systemd' and old_service )
 
 - name: Avi SE | Requirements | systemd | Stop the avise service for fresh install
   systemd: daemon_reload=yes name=avise enabled=no state=stopped
@@ -13,7 +13,7 @@
 
 - name: Avi SE | Requirements | upstart | Stop the avise service for fresh install
   service: name=avise enabled=no state=stopped
-  when: ansible_service_mgr == 'upstart and se_version|version_compare('17.0.0', '>=')
+  when: ansible_service_mgr == 'upstart and new_service
 
 - name: Avi SE | Requirements | Clean directories for fresh install
   file: path="{{ item }}" state=absent

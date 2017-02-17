@@ -24,6 +24,7 @@
 - name: Avi SE | Services | init.d | Deploy the avise_watcher service
   copy: src=init/avise_watcher dest=/etc/init.d/avise_watcher mode=0755
   register: avise_watcher_service
+  notify: Avi SE | Services | init.d | Restart the avise_watcher service
 
 - name: Avi SE | Services | init.d | Deploying avise_watcher rc links
   file: src=/etc/init.d/avise_watcher dest={{ item }} state=link
@@ -36,12 +37,6 @@
     - /etc/rc5.d/S99avise_watcher
     - /etc/rc6.d/K99avise_watcher
 
-- name: Avi SE | Services | init.d | Restart the avise_watcher service
-  service: name=avise_watcher enabled=yes state=restarted
-  when: avise_service.changed or
-        avise_watcher_service.changed or
-        load_docker_repo.changed or
-        load_docker_hub.changed
-
 - name: Avi SE | Services | init.d | Start the avise_watcher service
   service: name=avise_watcher enabled=yes state=started
+  register: start_service

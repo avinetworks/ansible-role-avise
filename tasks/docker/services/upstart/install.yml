@@ -2,13 +2,11 @@
 - name: Avi SE | Services | upstart | Deploy the avise service
   copy: src=upstart/avise.conf dest=/etc/init/avise.conf mode=0644
   register: avise_service
+  notify: Avi SE | Services | upstart | Restart the avise service
+  when:
+    - new_service
+    - docker_run_changed
 
-- name: Avi SE | Services | upstart | Restart the avise service
-  service: name=avise enabled=yes state=restarted
-  when: avise_service.changed or
-        avise_init_service.changed or
-        load_docker_repo.changed or
-        load_docker_hub.changed
-
-- name: Avi SE | Services | upstart | Start the avise service
+- name: Avi SE | Services | upstart | Ensure the service has been started
   service: name=avise enabled=yes state=started
+  register: start_service

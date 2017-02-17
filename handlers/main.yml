@@ -2,3 +2,11 @@
 - name: Avi SE | Services | systemd | Restart the avise service
   systemd: daemon_reload=yes name=avise enabled=yes state=restarted
   when: not start_service.changed
+
+- name: Avi SE | Services | upstart | Restart the avise service
+  service: name=avise enabled=yes state=restarted
+  when: not start_service.changed
+
+- name: Avi SE | Services | init.d | Restart the avise_watcher service
+  service: name=avise_watcher enabled=yes state=restarted
+  when: not start_service.changed

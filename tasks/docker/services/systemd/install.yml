@@ -16,8 +16,3 @@
   register: avise_service
   notify: Avi SE | Services | systemd | Restart the avise service
   when: new_service
-
-# Standard steps
-- name: Avi SE | Services | systemd | Ensure the service has been started
-  systemd: daemon_reload=yes name=avise enabled=yes state=started
-  register: start_service

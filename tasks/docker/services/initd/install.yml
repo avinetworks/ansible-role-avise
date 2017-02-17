@@ -34,7 +34,3 @@
     - /etc/rc4.d/S99avise_watcher
     - /etc/rc5.d/S99avise_watcher
     - /etc/rc6.d/K99avise_watcher
-
-- name: Avi SE | Services | init.d | Start the avise_watcher service
-  service: name=avise_watcher enabled=yes state=started
-  register: start_service

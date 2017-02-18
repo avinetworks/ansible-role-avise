@@ -12,10 +12,6 @@
   dnf: name=pciutils
   when: ansible_pkg_mgr == 'dnf'
 
-- name: Avi SE | DPDK | Disable and stop NetworkManager
-  service: name="NetworkManager" state="stopped" enabled="no"
-  when: ansible_os_family == "RedHat"
-
 - name: Avi SE | DPDK | Set facts
   set_fact:
     old_dpdk: "{{ se_version|version_compare('16.3.0', '<') }}"
@@ -55,7 +51,7 @@
     - /opt/avi/kmod
 
 - name: Avi SE | DPDK | Copy and Unarchive the DPDK KLMS
-  unarchive: src=dpdk_klms.tar.gz dest=/tmp/dpdk_klms
+  unarchive: src={{ dpdk_klms_file }} dest=/tmp/dpdk_klms
 
 - name: Avi SE | DPDK | Check that DPDK KLMS exist for the current kernel | 1/2.
   stat: path=/tmp/dpdk_klms/precompiled-klms/{{ ansible_kernel }}

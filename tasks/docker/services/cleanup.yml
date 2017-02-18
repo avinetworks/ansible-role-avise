@@ -1,4 +1,7 @@
 ---
+# Since we use notify, we may not even need this anymore...but keeping it
+# for future reference
+#
 # - name: Avi SE | Docker | Services | Compare docker run parameters
 #   set_fact:
 #     docker_run_changed: "{{ existing_run_params != docker_run_params }}"

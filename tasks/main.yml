@@ -3,5 +3,10 @@
 
 # This task will appropriately start the selected type of deployment.
 # It was added to prevent mass "skipped" messages when deploying Avi.
+- name: Avi SE | Set facts
+  set_fact:
+    autoregister: false
+  when: auth_token != None
+
 - name: Avi SE | Deployment
   include: "{{ deploy_type }}_deploy.yml"

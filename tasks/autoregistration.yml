@@ -3,9 +3,11 @@
 # these tasks will automatically register the service engine to the controller
 
 - name: Avi SE | Autoregistration | Check if required login vars are defined
-  fail: msg="Variable {{ item }} is undefined"
-  when: item is undefined
+  assert:
+    that:
+      - item != None
   with_items:
+    - master_ctl_ip
     - master_ctl_username
     - master_ctl_password
 

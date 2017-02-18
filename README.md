@@ -20,7 +20,9 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 ### General Variables (apply to all deployment modes)
 | Variable | Required | Default | Comments |
 |-----------------------|----------|-----------|---------|
-| `autoregister` | No | `true` | Autoregisters the service engine to the specified controller. |
+| `deploy_type` | No | `docker` | Sets the type of deployment that should be triggered. Valid options: `docker`, `csp` |
+| `autoregister` | No | `true` | Autoregister the service engine to the specified controller. |
+| `auth_token` | No | `None` | If defined it will be the token used to register the service engine to the controller |
 | `master_ctl_ip` | Yes | `None` | The IP address of the controller. |
 | `master_ctl_username` | Yes | `None` | The username to login into controller api. <br>**Not required when `autoregister: false`** |
 | `master_ctl_password` | Yes | `None` | The passowrd to login into the controller api. <br>**Not required when `autoregister: false`** |
@@ -57,7 +59,6 @@ These are only marked required, for when you are using CSP Deployment.
 
 | Variable | Required | Default | Comments |
 |-----------------------|----------|-----------|---------|
-| `csp_deploy` | Yes | `false` | Set to true if deploying on CSP. |
 | `csp_user` | Yes | `None` | Username that will be used to connect to the CSP server. |
 | `csp_password` | Yes | `None` | Password required to authenticate the user. |
 | `csp_se_qcow_image_file` | No | `se.qcow` | Relative or absolute location of the SE qcow. |
@@ -128,7 +129,7 @@ avinetworks.avisdk
   gather_facts: false
   roles:
     - role: avinetworks.avise
-      csp_deploy: true
+      deploy_type: csp
       csp_user: admin
       csp_password: password
       master_ctl_ip: 10.128.2.20
@@ -138,10 +139,25 @@ avinetworks.avisdk
       csp_se_mgmt_ip: 10.128.2.20
       csp_se_mgmt_mask: 255.255.255.0
       csp_se_default_gw: 10.128.2.1
-      csp_se_service_name: avi-controller
+      csp_se_service_name: avi-se
       csp_se_disk_size: 10
       csp_se_num_cpu: 2
       csp_se_memory: 4
+      csp_vnics:
+        - nic: "0"
+          type: access
+          tagged: "false"
+          network_name: enp1s0f0
+        - nic: 1
+          type: passthrough
+          passthrough_mode: sriov
+          vlan: 200
+          network_name: enp7s0f0
+        - nic: 2
+          type: passthrough
+          passthrough_mode: sriov
+          vlan: 201
+          network_name: enp7s0f1
 ```
 
 ### Minimum Example

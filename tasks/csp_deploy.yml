@@ -12,6 +12,3 @@
 
 - name: Avi SE | CSP | Service deploy
   include: csp/service_deploy.yml
-
-# This is only supported on Ansible 2.2, thus cannot be used when customers are on lower versions.
-#- meta: end_play

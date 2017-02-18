@@ -18,9 +18,6 @@
 - name: Avi SE | Docker | Services | Service checks
   include: docker/services/check.yml
 
-- name: Avi SE | Docker | Cleanup
-  include: docker/services/cleanup.yml
-
 - name: Avi SE | Perform Autoregistration
   include: autoregistration.yml
   when: autoregister and avise_service_exists is not defined
@@ -29,6 +26,9 @@
   set_fact:
     env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ avi_token }}']"
   when: avi_token is defined
+
+- name: Avi SE | Docker | Cleanup
+  include: docker/services/cleanup.yml
 
 - name: Avi SE | Install the Avi SE service
   include: docker/services/install.yml

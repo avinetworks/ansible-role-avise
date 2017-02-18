@@ -39,8 +39,3 @@
   set_fact:
     avi_token: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
   when: existing_run_params is defined
-
-- name: Avi SE | Docker | Services | Compare docker run parameters
-  set_fact:
-    docker_run_changed: "{{ existing_run_params != docker_run_params }}"
-  when: existing_run_params is defined

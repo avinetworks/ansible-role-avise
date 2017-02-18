@@ -1,19 +1,20 @@
 ---
 - block:
-    - name: Avi SE | Services | Install the Avi SE service
+    - name: Avi SE | Services | init.d | 16.x | Install the Avi SE service
       include: "systemd/install.yml"
       when: ansible_service_mgr == "systemd"
-    - name: Avi SE | Services | Install the Avi SE service
+    - name: Avi SE | Services | init.d | 16.x | Install the Avi SE service
       include: "initd/install.yml"
       when: ansible_service_mgr != "systemd"
   when: old_service
 
 - block:
-    - name: Avi SE | Services | Install the Avi SE service file
+    - name: Avi SE | Services | 17.x | Install the Avi SE service file
       template:
         src: avise.j2
         dest: /usr/sbin/avise
         mode: 0644
-    - name: Avi SE | Services | Install the Avi SE service
+      notify: Avi SE | Services | Restart the avise service
+    - name: Avi SE | Services | {{ ansible_service_mgr }} | 17.x | Install the Avi SE service
       include: "{{ ansible_service_mgr }}/install.yml"
   when: new_service

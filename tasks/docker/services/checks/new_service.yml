@@ -1,0 +1,13 @@
+---
+- name: Avi SE | Docker | Services | Check for existing avise service
+  stat: path=/usr/sbin/avise
+  register: avise_service_file
+- name: Avi SE | Docker | Services | Read existing service's docker run configuration
+  shell: cat /usr/sbin/avise | sed -n -e 's/^docker_run_params=//p' | tr -d '"'
+  register: existing_run_params_raw
+  changed_when: false
+  when: avise_service_file.stat.exists
+- set_fact:
+    existing_run_params: "{{ existing_run_params_raw.stdout }}"
+    avise_service_exists: "{{ avise_service_file.stat.exists }}"
+  when: avise_service_file.stat.exists

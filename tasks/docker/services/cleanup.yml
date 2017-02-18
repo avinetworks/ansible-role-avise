@@ -23,6 +23,7 @@
 
 - name: Avi SE | Docker | Cleanup | Stop and Remove the container if it's not the desired version.
   shell: "docker stop {{ item }} && docker rm -f {{ item }}"
+  notify: Avi SE | Services | Restart the avise service
   when:
     - item not in desired_running.stdout_lines
   with_items:

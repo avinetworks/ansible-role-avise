@@ -6,8 +6,13 @@ deploy_type: docker
 
 # standard parameters
 skip_requirements: false
-master_ctl_ip: ~
+
+# autoregister parameters
 autoregister: true
+auth_token: ~
+master_ctl_ip: ~
+master_ctl_username: ~
+master_ctl_password: ~
 cloud_name: Default-Cloud
 tenant: admin
 
@@ -31,7 +36,6 @@ csp_se_qcow_image_name: "{{ csp_se_qcow_image_file|basename }}"
 csp_se_mgmt_ip: ~
 csp_se_mgmt_mask: ~
 csp_se_default_gw: ~
-csp_se_authtoken: ~
 csp_se_tenant_uuid: ~
 csp_se_disk_size: 64
 csp_se_service_name: avi-se
@@ -97,4 +101,4 @@ env_variables_all: "{{ env_variables_extras + env_variables_default }}"
 env_variables_string: "{% for env_var in env_variables_all|reject('match', '^$') %} -e {{ env_var }}{% endfor %}"
 
 # !!!! BEWARE: This is to completely override everything passed into the service template for the docker run. DON'T EDIT THIS UNLESS YOU KNOW WHAT YOUR DOING!!!!!
-docker_run_params: "--name=avise -d {{ env_variables_string }} --net=host {{ mounts_string }} --privileged=true {{ se_image }}"
+docker_run_params: "--name=avise -d{{ env_variables_string }} --net=host{{ mounts_string }} --privileged=true {{ se_image }}"

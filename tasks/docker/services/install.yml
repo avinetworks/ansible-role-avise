@@ -10,10 +10,7 @@
 
 - block:
     - name: Avi SE | Services | 17.x | Install the Avi SE service file
-      template:
-        src: avise.j2
-        dest: /usr/sbin/avise
-        mode: 0644
+      template: src=avise.j2 dest=/usr/sbin/avise mode=0755
       notify: Avi SE | Services | Restart the avise service
     - name: Avi SE | Services | {{ ansible_service_mgr }} | 17.x | Install the Avi SE service
       include: "{{ ansible_service_mgr }}/install.yml"

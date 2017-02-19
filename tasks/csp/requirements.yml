@@ -19,7 +19,6 @@
     - csp_se_memory
   when: not skip_requirements
 
-
 - name: Avi SE | CSP | Requirements | Validate Sizing
   assert:
     that:

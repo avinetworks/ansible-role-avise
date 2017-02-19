@@ -1,7 +1,7 @@
 ---
 # Variable defaults file for avinetworks.avise
 
-# sets the type of deployment
+# set the type of deployment
 deploy_type: docker
 
 # standard parameters
@@ -41,7 +41,7 @@ csp_se_disk_size: 64
 csp_se_service_name: avi-se
 csp_se_num_cpu: 4
 csp_se_memory: 16
-csp_vnics:
+csp_se_vnics:
   - nic: "0"
     type: access
     tagged: "false"
@@ -57,7 +57,7 @@ csp_vnics:
     vlan: 201
     network_name: enp7s0f1
 
-### default deployment parameters ###
+### docker deployment parameters ###
 fresh_install: false
 inband_mgmt: false
 se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"

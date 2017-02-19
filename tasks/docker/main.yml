@@ -1,4 +1,13 @@
 ---
+- name: Avi SE | Check minimum requirements
+  include: requirements.yml
+
+- name: Avi SE | Perform specific os tasks
+  include: os/{{ ansible_distribution|lower }}.yml
+
+- name: Avi SE | Perform specific os family tasks
+  include: family/{{ ansible_os_family|lower }}.yml
+
 # We must do this step first just in case we need to override defaults from the supplied package
 - name: Avi SE | Docker | Package Deploy
   include: package_deploy.yml
@@ -9,13 +18,14 @@
   changed_when: false
   register: docker_match
 
-- name: Avi SE | Docker | Docker Hub
-  include: docker_hub.yml
-  when: docker_repo == None and not package_deploy
-
-- name: Avi SE | Docker | Custom Repo
-  include: custom_repo.yml
-  when: docker_repo != None and not package_deploy
+- block:
+    - name: Avi SE | Docker | Docker Hub
+      include: docker_hub.yml
+      when: docker_repo == None
+    - name: Avi SE | Docker | Custom Repo
+      include: custom_repo.yml
+      when: docker_repo != None
+  when: not package_deploy
 
 # This section must go after package_deploy, as se_version is extracted from the output
 - name: Avi SE | Docker | Service | Set service fact for deploy
@@ -23,17 +33,24 @@
     old_service: "{{ se_version|version_compare('17.0.0', '<') or se_version == 'latest' }}"
     new_service: "{{ se_version|version_compare('17.0.0', '>=') and se_version != 'latest' }}"
 
-- name: Avi SE | Docker | Get our desired docker image id.
-  shell: "docker images -q {{ se_image }}"
-  changed_when: false
-  register: docker_image
+- name: Avi SE | Install DPDK
+  include: dpdk.yml
+  when: dpdk
 
-- name: Avi SE | Docker | Get list of running se containers
-  shell: "docker ps -q -f name=avise"
-  changed_when: false
-  register: running_se_containers
+- name: Avi SE | Docker | Services | Service checks
+  include: services/check.yml
 
-- name: Avi SE | Docker | Check if desired version is already running.
-  shell: "docker ps -q -f ancestor={{ docker_image.stdout }}"
-  changed_when: false
-  register: desired_running
+- name: Avi SE | Perform Autoregistration
+  include: autoregistration.yml
+  when: autoregister and avise_service_exists is not defined
+
+- name: Avi SE | Docker | Services | Append the token to the docker environment variables.
+  set_fact:
+    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ avi_token }}']"
+  when: avi_token is defined
+
+- name: Avi SE | Docker | Cleanup
+  include: services/cleanup.yml
+
+- name: Avi SE | Install the Avi SE service
+  include: services/install.yml

@@ -9,4 +9,4 @@
   when: auth_token != None
 
 - name: Avi SE | Deployment
-  include: "{{ deploy_type }}_deploy.yml"
+  include: "{{ deploy_type }}/main.yml"

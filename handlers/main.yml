@@ -2,6 +2,7 @@
 # handlers for avinetworks.avise
 - name: Avi SE | Services | systemd | Daemon reload
   systemd: daemon_reload=yes name=avise
+  when: ansible_version|version_compare('2.2', '>=')
 
 - name: Avi SE | Services | Restart the avise service
   service: name=avise enabled=yes state=restarted

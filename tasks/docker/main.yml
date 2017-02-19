@@ -41,7 +41,7 @@
   include: services/check.yml
 
 - name: Avi SE | Perform Autoregistration
-  include: autoregistration.yml
+  include: ../autoregistration.yml
   when: autoregister and avise_service_exists is not defined
 
 - name: Avi SE | Docker | Services | Append the token to the docker environment variables.

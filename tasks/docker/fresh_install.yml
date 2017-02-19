@@ -13,7 +13,7 @@
 
 - name: Avi SE | Requirements | upstart | Stop the avise service for fresh install
   service: name=avise enabled=no state=stopped
-  when: ansible_service_mgr == 'upstart and new_service
+  when: ansible_service_mgr == 'upstart' and new_service
 
 - name: Avi SE | Requirements | Clean directories for fresh install
   file: path="{{ item }}" state=absent

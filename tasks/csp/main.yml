@@ -2,13 +2,13 @@
 # Using the relative, or absolute location of the file will allow you to upload, and configure the CSP service.
 #
 - name: Avi SE | CSP | Requirements
-  include: csp/requirements.yml
+  include: requirements.yml
 
 - name: Avi SE | CSP | Image deploy
-  include: csp/qcow_deploy.yml
+  include: qcow_deploy.yml
 
 - name: Avi SE | CSP | Metafile deploy
-  include: csp/metafile_deploy.yml
+  include: metafile_deploy.yml
 
 - name: Avi SE | CSP | Service deploy
-  include: csp/service_deploy.yml
+  include: service_deploy.yml

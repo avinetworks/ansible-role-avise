@@ -1,13 +1,13 @@
 ---
 - name: Avi SE | Docker | Services | Check
   include: checks/old_service.yml
-  when: old_service
+  when: se_old_service
 
 - name: Avi SE | Docker | Services | Check
   include: checks/new_service.yml
-  when: new_service
+  when: se_new_service
 
 - name: Avi SE | Docker | Services | Capture AVICOOKIE from docker run params
   set_fact:
-    avi_token: "{{ existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
-  when: existing_run_params is defined
+    se_avi_token: "{{ se_existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
+  when: se_existing_run_params is defined

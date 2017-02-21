@@ -1,10 +1,10 @@
-avi.mgmt-ip.SE: "{{ csp_se_mgmt_ip }}"
-avi.mgmt-mask.SE: "{{ csp_se_mgmt_mask }}"
-avi.default-gw.SE: "{{ csp_se_default_gw }}"
-AVICNTRL: "{{ master_ctl_ip }}"
-{% if avi_token != None -%}
-AVICNTRL_AUTHTOKEN: "{{ avi_token }}"
+avi.mgmt-ip.SE: "{{ se_csp_mgmt_ip }}"
+avi.mgmt-mask.SE: "{{ se_csp_mgmt_mask }}"
+avi.default-gw.SE: "{{ se_csp_default_gw }}"
+AVICNTRL: "{{ se_master_ctl_ip }}"
+{% if se_avi_token != None -%}
+AVICNTRL_AUTHTOKEN: "{{ se_avi_token }}"
 {% endif %}
-{% if csp_se_tenant_uuid != None -%}
-AVITENANT_UUID: "{{ csp_se_tenant_uuid }}"
+{% if se_csp_tenant_uuid != None -%}
+AVITENANT_UUID: "{{ se_csp_tenant_uuid }}"
 {% endif %}

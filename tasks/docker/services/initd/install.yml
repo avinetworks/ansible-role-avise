@@ -1,19 +1,23 @@
 ---
 - name: Avi SE | Services | init.d | Set container env for non-systemd
   set_fact:
-    env_variables_extras: "{{ env_variables_extras + ['NON_SYSTEMD=1'] }}"
+    se_env_variables_extras: "{{ se_env_variables_extras + ['NON_SYSTEMD=1'] }}"
 
-- name: Avi SE | Services | init.d | 16.x | Deploy the avise service
-  template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
-  register: avise_service
-  notify: Avi SE | Services | init.d | Restart the avise_watcher service
-  when: old_service
+- block:
+    - name: Avi SE | Services | init.d | 16.x | Deploy the avise service
+      template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
+      register: avise_service_16
+      notify: Avi SE | Services | init.d | Restart the avise_watcher service
+    - set_fact: avise_service={{ avise_service_16 }}
+  when: se_old_service
 
-- name: Avi SE | Services | init.d | 17.x | Deploy the avise service
-  copy: src=init/avise dest=/etc/init.d/avise mode=0755
-  register: avise_service
-  notify: Avi SE | Services | init.d | Restart the avise_watcher service
-  when: new_service
+- block:
+    - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
+      copy: src=init/avise dest=/etc/init.d/avise mode=0755
+      register: avise_service_17
+      notify: Avi SE | Services | init.d | Restart the avise_watcher service
+    - set_fact: avise_service={{ avise_service_17 }}
+  when: se_new_service
 
 - name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script
   copy: src=init/avise_watcher.sh dest=/etc/init.d/avise_watcher.sh mode=0755

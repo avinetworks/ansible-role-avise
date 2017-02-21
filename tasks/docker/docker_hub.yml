@@ -3,7 +3,7 @@
 
 - name: Avi SE | Docker | Load the image from Docker Hub
   shell: "docker pull {{ se_image }}"
-  register: load_docker_hub
-  changed_when: "'Status: Image is up to date' not in load_docker_hub.stdout"
+  register: se_load_docker_hub
+  changed_when: "'Status: Image is up to date' not in se_load_docker_hub.stdout"
   notify: Avi SE | Services | Restart the avise service
-  when: docker_match.stdout == "" or se_version == "latest"
+  when: se_docker_match.stdout == "" or se_version == "latest"

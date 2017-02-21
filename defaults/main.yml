@@ -2,46 +2,47 @@
 # Variable defaults file for avinetworks.avise
 
 # set the type of deployment
-deploy_type: docker
+se_deploy_type: docker
 
 # standard parameters
-skip_requirements: false
+se_skip_requirements: false
 
-# autoregister parameters
-autoregister: true
-auth_token: ~
-master_ctl_ip: ~
-master_ctl_username: ~
-master_ctl_password: ~
-cloud_name: Default-Cloud
-tenant: admin
+# se_autoregister parameters
+se_autoregister: true
+se_auth_token: ~
+se_master_ctl_ip: ~
+se_master_ctl_username: ~
+se_master_ctl_password: ~
+se_cloud_name: Default-Cloud
+se_tenant: admin
 
 # parameters for use when deploying as package
-package_deploy: false
-package_source: se_docker.tgz
-package_dest: /tmp/se_docker.tgz
+se_package_deploy: false
+se_package_source: se_docker.tgz
+se_package_dest: /tmp/se_docker.tgz
 
 # parameters for use when pulling from docker hub or docker repo
-docker_repo: ~
-docker_repo_user: ~
-docker_repo_password: ~
+se_docker_repo: ~
+se_docker_repo_user: ~
+se_docker_repo_password: ~
 se_version: latest
 se_image: "avinetworks/se:{{ se_version }}"
 
 # parameters for the CSP deployment
-csp_user: ~
-csp_password: ~
-csp_se_qcow_image_file: se.qcow
-csp_se_qcow_image_name: "{{ csp_se_qcow_image_file|basename }}"
-csp_se_mgmt_ip: ~
-csp_se_mgmt_mask: ~
-csp_se_default_gw: ~
-csp_se_tenant_uuid: ~
-csp_se_disk_size: 64
-csp_se_service_name: avi-se
-csp_se_num_cpu: 4
-csp_se_memory: 16
-csp_se_vnics:
+se_csp_user: ~
+se_csp_password: ~
+se_csp_qcow_image_file: se.qcow
+se_csp_qcow_image_name: "{{ se_csp_qcow_image_file|basename }}"
+se_csp_mgmt_ip: ~
+se_csp_mgmt_mask: ~
+se_csp_default_gw: ~
+se_csp_tenant_uuid: ~
+se_csp_disk_size: 64
+se_csp_service_name: avi-se
+se_csp_metafile_name: avi_meta_{{ se_csp_service_name }}.yml
+se_csp_num_cpu: 4
+se_csp_memory: 16
+se_csp_vnics:
   - nic: "0"
     type: access
     tagged: "false"
@@ -58,24 +59,24 @@ csp_se_vnics:
     network_name: enp7s0f1
 
 ### docker deployment parameters ###
-fresh_install: false
-inband_mgmt: false
+se_fresh_install: false
+se_inband_mgmt: false
 se_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
 se_memory_gb: "{{ ansible_memtotal_mb / 1024 }}"
-destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
-se_disk_path: "{{ destination_disk }}/opt/avi/se/data"
+se_destination_disk: "{{ ansible_mounts|sort(reverse=True, attribute='size_total')|map(attribute='mount')|first}}"
+se_disk_path: "{{ se_destination_disk }}/opt/avi/se/data"
 se_disk_gb: 10
 se_logs_disk_path: ~
 se_logs_disk_gb: ~
 
-# If dpdk set to true, will configure host for DPDK
-dpdk: false
-dpdk_klms_file: dpdk_klms.tar.gz
-dpdk_supported_nics: "82599|82598|X540|X710|XL710"
+# If se_dpdk set to true, will configure host for DPDK
+se_dpdk: false
+se_dpdk_klms_file: dpdk_klms.tar.gz
+se_dpdk_supported_nics: "82599|82598|X540|X710|XL710"
 
 # Mount variables which are sent to the docker container, these are used in the service templates.
-mounts_extras: []
-mounts_default:
+se_mounts_extras: []
+se_mounts_default:
   - "/mnt:/mnt"
   - "/dev:/dev"
   - "/etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts"
@@ -85,22 +86,22 @@ mounts_default:
   - "/var/run/docker.sock:/var/run/docker.sock"
   - "{{ (se_disk_path == None) | ternary('', se_disk_path ~ ':/vol/') }}"
   - "{{ (se_logs_disk_path == None) | ternary('', se_logs_disk_path ~ ':/vol_logs/') }}"
-mounts_all: "{{ mounts_extras + mounts_default}}"
-mounts_string: "{% for mount_var in mounts_all|reject('match', '^$') %} -v {{ mount_var }}{% endfor %}"
+se_mounts_all: "{{ se_mounts_extras + se_mounts_default}}"
+se_mounts_string: "{% for mount_var in se_mounts_all|reject('match', '^$') %} -v {{ mount_var }}{% endfor %}"
 
 # Environment variables which are sent to the docker container, these are used in the service templates.
-env_variables_extras: []
-env_variables_default:
+se_env_variables_extras: []
+se_env_variables_default:
   - "CONTAINER_NAME=avise"
-  - "CONTROLLERIP={{ master_ctl_ip | string }}"
+  - "CONTROLLERIP={{ se_master_ctl_ip | string }}"
   - "NTHREADS={{ se_cores|int }}"
   - "SEMEMMB={{ se_memory_gb|int * 1024 }}"
-  - "{{ inband_mgmt | ternary('SE_INBAND_MGMT=true', 'SE_INBAND_MGMT=false') }}"
-  - "{{ dpdk | ternary('DOCKERNETWORKMODE=HOST_DPDK', 'DOCKERNETWORKMODE=HOST') }}"
+  - "{{ se_inband_mgmt | ternary('SE_INBAND_MGMT=true', 'SE_INBAND_MGMT=false') }}"
+  - "{{ se_dpdk | ternary('DOCKERNETWORKMODE=HOST_DPDK', 'DOCKERNETWORKMODE=HOST') }}"
   - "{{ (se_disk_gb == None) | ternary('', 'DISKSZ=' + ( se_disk_gb|int * 1024 )|string ) }}"
   - "{{ (se_logs_disk_gb == None) | ternary('', 'LOG_DISKSZ=' + ( se_logs_disk_gb|int * 1024 )|string ) }}"
-env_variables_all: "{{ env_variables_extras + env_variables_default }}"
-env_variables_string: "{% for env_var in env_variables_all|reject('match', '^$') %} -e {{ env_var }}{% endfor %}"
+se_env_variables_all: "{{ se_env_variables_extras + se_env_variables_default }}"
+se_env_variables_string: "{% for env_var in se_env_variables_all|reject('match', '^$') %} -e {{ env_var }}{% endfor %}"
 
 # !!!! BEWARE: This is to completely override everything passed into the service template for the docker run. DON'T EDIT THIS UNLESS YOU KNOW WHAT YOUR DOING!!!!!
-docker_run_params: "--name=avise -d{{ env_variables_string }} --net=host{{ mounts_string }} --privileged=true {{ se_image }}"
+se_docker_run_params: "--name=avise -d{{ se_env_variables_string }} --net=host{{ se_mounts_string }} --privileged=true {{ se_image }}"

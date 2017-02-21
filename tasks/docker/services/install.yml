@@ -6,7 +6,7 @@
     - name: Avi SE | Services | init.d | 16.x | Install the Avi SE service
       include: "initd/install.yml"
       when: ansible_service_mgr != "systemd"
-  when: old_service
+  when: se_old_service
 
 - block:
     - name: Avi SE | Services | 17.x | Install the Avi SE service file
@@ -14,4 +14,4 @@
       notify: Avi SE | Services | Restart the avise service
     - name: Avi SE | Services | {{ ansible_service_mgr }} | 17.x | Install the Avi SE service
       include: "{{ ansible_service_mgr }}/install.yml"
-  when: new_service
+  when: se_new_service

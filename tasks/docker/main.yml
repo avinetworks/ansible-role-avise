@@ -10,44 +10,44 @@
 
 # We must do this step first just in case we need to override defaults from the supplied package
 - name: Avi SE | Docker | Package Deploy
-  include: package_deploy.yml
-  when: package_deploy
+  include: se_package_deploy.yml
+  when: se_package_deploy
 
 - name: Avi SE | Docker | Check if specified image already exists.
   shell: "docker images -q {{ se_image }}"
   changed_when: false
-  register: docker_match
+  register: se_docker_match
 
 - block:
     - name: Avi SE | Docker | Docker Hub
       include: docker_hub.yml
-      when: docker_repo == None
+      when: se_docker_repo == None
     - name: Avi SE | Docker | Custom Repo
       include: custom_repo.yml
-      when: docker_repo != None
-  when: not package_deploy
+      when: se_docker_repo != None
+  when: not se_package_deploy
 
-# This section must go after package_deploy, as se_version is extracted from the output
+# This section must go after se_package_deploy, as se_version is extracted from the output
 - name: Avi SE | Docker | Service | Set service fact for deploy
   set_fact:
-    old_service: "{{ se_version|version_compare('17.0.0', '<') or se_version == 'latest' }}"
-    new_service: "{{ se_version|version_compare('17.0.0', '>=') and se_version != 'latest' }}"
+    se_old_service: "{{ se_version|version_compare('17.0.0', '<') or se_version == 'latest' }}"
+    se_new_service: "{{ se_version|version_compare('17.0.0', '>=') and se_version != 'latest' }}"
 
 - name: Avi SE | Install DPDK
-  include: dpdk.yml
-  when: dpdk
+  include: se_dpdk.yml
+  when: se_dpdk
 
 - name: Avi SE | Docker | Services | Service checks
   include: services/check.yml
 
 - name: Avi SE | Perform Autoregistration
   include: ../autoregistration.yml
-  when: autoregister and avise_service_exists is not defined
+  when: se_autoregister and se_service_exists is not defined
 
 - name: Avi SE | Docker | Services | Append the token to the docker environment variables.
   set_fact:
-    env_variables_all: "{{ env_variables_all }} + ['AVICOOKIE={{ avi_token }}']"
-  when: avi_token is defined
+    se_env_variables_all: "{{ se_env_variables_all }} + ['AVICOOKIE={{ se_avi_token }}']"
+  when: se_avi_token is defined
 
 - name: Avi SE | Docker | Cleanup
   include: services/cleanup.yml

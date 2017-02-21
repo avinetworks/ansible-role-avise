@@ -12,7 +12,7 @@ docker_exec=/usr/bin/docker
 logfile="/var/log/${container}.log"
 cidfile="/var/run/${container}.cid"
 image_name="avinetworks/se"
-docker_run_params="{{ docker_run_params }}"
+se_docker_run_params="{{ se_docker_run_params }}"
 
 write_log() {
   echo $1 2>&1 | tee -a ${logfile}
@@ -28,7 +28,7 @@ container_exists() {
 
 start_container() {
   write_log "[`date`] Starting the ${container} container"
-  /usr/bin/docker run ${docker_run_params}
+  /usr/bin/docker run ${se_docker_run_params}
   if [ $? -eq 0 ]; then
     write_log "[`date`] Service ${container} running..."
   else
@@ -65,10 +65,10 @@ prestart() {
     write_log "[`date`] Container ${container} already exists, but not running. This can be caused by an
       improper shutdown, or service crash. Performing cleanup"
     remove_container
-    {% if dpdk %}{{ dpdk_pre }}{% endif %}
+    {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
     start_container
   else
-    {% if dpdk %}{{ dpdk_pre }}{% endif %}
+    {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
     start_container
   fi
 }
@@ -93,7 +93,7 @@ poststop() {
   if container_exists; then
     remove_container
   fi
-  {% if dpdk %}{{ dpdk_post }}{% endif %}
+  {% if se_dpdk %}{{ se_dpdk_post }}{% endif %}
 }
 
 restart() {

@@ -5,8 +5,8 @@
 # It was added to prevent mass "skipped" messages when deploying Avi.
 - name: Avi SE | Set facts
   set_fact:
-    autoregister: false
-  when: auth_token != None
+    se_autoregister: false
+  when: se_auth_token != None
 
 - name: Avi SE | Deployment
-  include: "{{ deploy_type }}/main.yml"
+  include: "{{ se_deploy_type }}/main.yml"

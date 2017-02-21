@@ -7,23 +7,23 @@
 
 - name: Avi SE | Requirements | Set facts
   set_fact:
-    max_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
-    ansible_memtotal_gb: "{{ ansible_memtotal_mb / 1024 }}"
+    se_max_cores: "{{ ansible_processor_cores * ansible_processor_count }}"
+    se_ansible_memtotal_gb: "{{ ansible_memtotal_mb / 1024 }}"
 
 - name: Avi SE | Requirements | Validate Parameters
   assert:
     that:
-      - "master_ctl_ip != None"
+      - "se_master_ctl_ip != None"
       - "ansible_memtotal_mb|int >= 1024"
-      - "se_memory_gb|int <= ansible_memtotal_gb|int"
+      - "se_memory_gb|int <= se_ansible_memtotal_gb|int"
       - "se_memory_gb|int >= se_cores|int"
-      - "max_cores|int >= 1"
-      - "se_cores|int <= max_cores|int"
-  when: not skip_requirements
+      - "se_max_cores|int >= 1"
+      - "se_cores|int <= se_max_cores|int"
+  when: not se_skip_requirements
 
 - name: Avi SE | Requirements | Fresh install steps
-  include: fresh_install.yml
-  when: fresh_install
+  include: se_fresh_install.yml
+  when: se_fresh_install
 
 - name: Avi SE | Requirements | Create directories for service engine
   file: path="{{ item }}" state=directory mode=0755
@@ -48,11 +48,11 @@
     that:
       - se_disk_gb != None
       - se_disk_path_space.stdout > se_disk_gb
-  when: se_disk_path != None and not skip_requirements
+  when: se_disk_path != None and not se_skip_requirements
 
 - name: Avi SE | Requirements | Check if there is enough space for service engine logs disk path
   assert:
     that:
       - se_logs_disk_gb != None
       - se_logs_disk_path_space.stdout > se_logs_disk_gb
-  when: se_logs_disk_path != None and not skip_requirements
+  when: se_logs_disk_path != None and not se_skip_requirements

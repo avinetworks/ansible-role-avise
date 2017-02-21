@@ -1,43 +1,39 @@
 ---
-- name: Avi SE | CSP | Metafile deploy | Setting the Avi metafile name
-  set_fact:
-    csp_se_metafile_name: avi_meta_{{ csp_se_service_name }}.yml
-
 - name: Avi SE | CSP | Metafile deploy | Information
-  debug: msg="Your metafile has been named {{ csp_se_metafile_name }}"
+  debug: msg="Your metafile has been named {{ se_csp_metafile_name }}"
 
 - name: Avi SE | CSP | Metafile deploy | See if the metafile already exists
   uri:
-    url: "https://{{ inventory_hostname }}/api/operational/repository/image/{{ csp_se_metafile_name }}/_operations/get_image"
+    url: "https://{{ inventory_hostname }}/api/operational/repository/image/{{ se_csp_metafile_name }}/_operations/get_image"
     method: POST
-    user: "{{ csp_user }}"
-    password: "{{ csp_password }}"
+    user: "{{ se_csp_user }}"
+    password: "{{ se_csp_password }}"
     force_basic_auth: yes
     headers:
       Accept: '*/*'
     validate_certs: false
     return_content: true
   failed_when: false
-  register: avi_metafile_exists
+  register: se_avi_metafile_exists
   delegate_to: localhost
 
-- block:
-    - set_fact:
-        avi_metafile_exists_json: "{{ avi_metafile_exists.content|from_json }}"
-    - debug: msg="Metafile {{ avi_metafile_exists_json.output.name }} already exists."
-  when: avi_metafile_exists.status == 200
+- debug:
+  vars:
+    se_avi_metafile_exists_json: "{{ se_avi_metafile_exists.content|from_json }}"
+  msg: "Metafile {{ se_avi_metafile_exists_json.output.name }} already exists."
+  when: se_avi_metafile_exists.status == 200
 
 - block:
     - name: Avi SE | CSP | Metafile deploy | Autoregistration
       include: ../autoregistration.yml
-      when: autoregister
+      when: se_autoregister
     - name: Avi SE | CSP | Metafile deploy | Create metafile content
       template:
         src: csp/avi_meta_se.j2
-        dest: /tmp/{{ csp_se_metafile_name }}
+        dest: /tmp/{{ se_csp_metafile_name }}
       delegate_to: localhost
-      register: avi_metafile
+      register: se_avi_metafile
     - name: Avi SE | CSP | Metafile deploy | Deploy metafile to the CSP device
-      shell: sshpass -p {{ csp_password }} scp /tmp/{{ csp_se_metafile_name }} {{ csp_user }}@{{ inventory_hostname }}:/osp/repository
+      shell: sshpass -p {{ se_csp_password }} scp /tmp/{{ se_csp_metafile_name }} {{ se_csp_user }}@{{ inventory_hostname }}:/osp/repository
       delegate_to: localhost
-  when: avi_metafile_exists.status != 200
+  when: se_avi_metafile_exists.status != 200

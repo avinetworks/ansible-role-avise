@@ -5,19 +5,19 @@
       - "{{ item }} != None"
     msg: "{{ item }} must be provided"
   with_items:
-    - csp_user
-    - csp_password
-    - csp_se_qcow_image_file
-    - csp_se_qcow_image_name
-    - csp_se_mgmt_ip
-    - csp_se_mgmt_mask
-    - csp_se_default_gw
-    - master_ctl_ip
-    - csp_se_disk_size
-    - csp_se_service_name
-    - csp_se_num_cpu
-    - csp_se_memory
-  when: not skip_requirements
+    - se_csp_user
+    - se_csp_password
+    - se_csp_qcow_image_file
+    - se_csp_qcow_image_name
+    - se_csp_mgmt_ip
+    - se_csp_mgmt_mask
+    - se_csp_default_gw
+    - se_master_ctl_ip
+    - se_csp_disk_size
+    - se_csp_service_name
+    - se_csp_num_cpu
+    - se_csp_memory
+  when: not se_skip_requirements
 
 - name: Avi SE | CSP | Requirements | Validate Sizing
   assert:
@@ -25,10 +25,10 @@
       - "{{ item.expr }}"
     msg: "{{ item.msg }}"
   with_items:
-    - expr: csp_se_num_cpu|int >= 1
+    - expr: se_csp_num_cpu|int >= 1
       msg: "Must have 1 or more CPU"
-    - expr: csp_se_memory|int >= 1
+    - expr: se_csp_memory|int >= 1
       msg: "Must have 1GB or more memory"
-    - expr: csp_se_disk_size|int >= 10
+    - expr: se_csp_disk_size|int >= 10
       msg: "Must have 10GB or more disk size"
-  when: not skip_requirements
+  when: not se_skip_requirements

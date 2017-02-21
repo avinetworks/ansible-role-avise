@@ -40,13 +40,13 @@ prestart() {
     write_log "[`date`] Already running avise container performing cleanup"
     remove_container
   fi
-  {% if dpdk %}{{ dpdk_pre }}{% endif %}
+  {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
 }
 
 start() {
   prestart
   write_log "[`date`] Starting the avise container"
-  /usr/bin/docker run {{ docker_run_params }}
+  /usr/bin/docker run {{ se_docker_run_params }}
   if [ $? -eq 0 ]; then
     write_log "[`date`] Service avise running..."
     /usr/bin/docker wait avise
@@ -73,7 +73,7 @@ stop() {
 }
 
 poststop() {
-  {% if dpdk %}{{ dpdk_post }}{% endif %}
+  {% if se_dpdk %}{{ se_dpdk_post }}{% endif %}
   if $(docker ps -a -f name=avise | grep -q avise); then
     remove_container
   fi

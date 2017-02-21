@@ -15,3 +15,7 @@
     - name: Avi SE | Services | {{ ansible_service_mgr }} | 17.x | Install the Avi SE service
       include: "{{ ansible_service_mgr }}/install.yml"
   when: se_new_service
+
+- name: Avi SE | Services | {{ ansible_service_mgr }} | Start the service since it's not running |
+  service: name=avise enabled=yes state=started
+  when: se_desired_running.stdout == ""

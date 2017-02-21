@@ -16,31 +16,46 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
   `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
-
-### General Variables (apply to all deployment modes)
+### Setting Deployment type
 | Variable | Required | Default | Comments |
-|-----------------------|----------|-----------|---------|
+|----------|----------|---------|----------|
 | `se_deploy_type` | No | `docker` | Sets the type of deployment that should be triggered. Valid options: `docker`, `csp` |
-| `se_autoregister` | No | `true` | Autoregister the service engine to the specified controller. |
-| `se_auth_token` | No | `None` | If defined it will be the token used to register the service engine to the controller |
-| `se_master_ctl_ip` | Yes | `None` | The IP address of the controller. |
-| `se_master_ctl_username` | Yes | `None` | The username to login into controller api. <br>**Not required when `se_autoregister: false`** |
-| `se_master_ctl_password` | Yes | `None` | The passowrd to login into the controller api. <br>**Not required when `se_autoregister: false`** |
-| `se_cloud_name` | No | `Default-Cloud` | Name of cloud the SE should auto-register with. |
-| `se_tenant` | No | `admin` | Name of se_tenant the SE should auto-register with.
+
+### Standard Parameters
+| Variable | Required | Default | Comments |
+|----------|----------|---------|----------|
 | `se_skip_requirements` | No | `false` | Skips any requirements for disk space, ram, and cpu. |
 
-### Default Deployment Variables (bare-metal/vm)
-These variables are for default or bare-metal deployment.
-
+### Auto-registration parameters
 | Variable | Required | Default | Comments |
-|-----------------------|----------|-----------|---------|
+|----------|----------|---------|----------|
+| `se_autoregister` | No | `true` | Autoregister the service engine to the specified controller. |
+| `se_auth_token` | No | `None`|  If defined it will be the token used to register the service engine to the controller |
+| `se_master_ctl_ip` | No | `None` | The IP address of the controller. |
+| `se_master_ctl_username` | No | `None` | The username to login into controller api. <br>**Not required when `se_autoregister: false`** |
+| `se_master_ctl_password` | No | `None` | The passowrd to login into the controller api. <br>**Not required when `se_autoregister: false`** |
+| `se_cloud_name` | No | `Default-Cloud` | Name of cloud the SE should auto-register with. |
+| `se_tenant` | No | `admin` | Name of se_tenant the SE should auto-register with. |
+
+### Package Deploy Variables
+| Variable | Required | Default | Comments |
+|----------|----------|---------|----------|
 | `se_package_deploy` | No | `false` | Set to true to deploy via package. |
 | `se_package_source` | No | `se_docker.tgz` | Source location of the docker tgz |
 | `se_package_dest` | No | `/tmp/se_docker.tgz` | Destination location on the remote server |
+
+### Docker Hub and Docker Repo Variables
+| Variable | Required | Default | Comments |
+|----------|----------|---------|----------|
 | `se_docker_repo` | No | `None` | If using a local repository please enter it here. |
 | `se_version` | No | `latest` | Version of the Avi Service Engine package you want to deploy. |
 | `se_image` | No | `avinetworks/se:{{ se_version }}` | Full name of the service engine image. |
+| `se_docker_repo_user` | No | `None` | User to be used for repository authentication. |
+| `se_docker_repo_password` | No | `None` | Password to be used for repository authentication. |
+
+### Docker Deployment Variables
+| Variable | Required | Default | Comments |
+|-----------------------|----------|-----------|---------|
 | `se_dpdk` | No | `false` | When set to true performs se_dpdk installation. |
 | `se_inband_mgmt` | No | `false` | Enables inband management interface for this Service Engine (i.e. Use Management interface for data traffic as well). |
 | `se_cores` | No | `{{ ansible_processor_cores * ansible_processor_count }}` | How many cores the service engine will use. |
@@ -58,7 +73,7 @@ These variables are for default or bare-metal deployment.
 These are only marked required, for when you are using CSP Deployment.
 
 | Variable | Required | Default | Comments |
-|-----------------------|----------|-----------|---------|
+|----------|----------|---------|----------|
 | `se_csp_user` | Yes | `None` | Username that will be used to connect to the CSP server. |
 | `se_csp_password` | Yes | `None` | Password required to authenticate the user. |
 | `se_csp_qcow_image_file` | No | `se.qcow` | Relative or absolute location of the SE qcow. |
@@ -71,7 +86,7 @@ These are only marked required, for when you are using CSP Deployment.
 | `se_csp_service_name` | No | `avi-se` | Name of the service to be created on the CSP. |
 | `se_csp_num_cpu` | No | `1` | Number of CPUs to be allocated to the SE. |
 | `se_csp_memory` | No | `1` | Amount of memory in GB allocated to the SE. |
-
+| `se_csp_vnics` | No | See `defaults/main.yml` | Sets the interfaces for the SE service |
 
 ### Parameter Override Variables
 However, you are able to provide these parameters another way. Using the following variables. This will allow the user to customize all values.  
@@ -173,7 +188,7 @@ avinetworks.avisdk
 
 ## License
 
-MIT
+BSD
 
 ## Author Information
 

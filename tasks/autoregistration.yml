@@ -16,7 +16,7 @@
     controller: "{{ se_master_ctl_ip }}"
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
-    se_tenant: "{{ se_tenant }}"
+    tenant: "{{ se_tenant }}"
     http_method: get
     path: "cloud?name={{ se_cloud_name }}"
   register: se_cloud_data
@@ -27,11 +27,11 @@
     controller: "{{ se_master_ctl_ip }}"
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
-    se_tenant: "{{ se_tenant }}"
+    tenant: "{{ se_tenant }}"
     http_method: get
     path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid}}
-  delegate_to: localhost
   register: se_authtoken
+  delegate_to: localhost
 
 - name: Avi SE | Autoregistration | Append the token to the docker environment variables.
   set_fact:

@@ -22,7 +22,7 @@
   when: not se_skip_requirements
 
 - name: Avi SE | Requirements | Fresh install steps
-  include: se_fresh_install.yml
+  include: fresh_install.yml
   when: se_fresh_install
 
 - name: Avi SE | Requirements | Create directories for service engine

@@ -42,7 +42,7 @@
 
 - name: Avi SE | Perform Autoregistration
   include: ../autoregistration.yml
-  when: se_autoregister and se_service_exists is not defined
+  when: ( se_autoregister and se_service_exists is not defined ) or se_fresh_install
 
 - name: Avi SE | Docker | Services | Append the token to the docker environment variables.
   set_fact:

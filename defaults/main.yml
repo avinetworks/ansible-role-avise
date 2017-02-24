@@ -57,6 +57,9 @@ se_csp_vnics:
     passthrough_mode: sriov
     vlan: 201
     network_name: enp7s0f1
+se_csp_hsm_static_route: ~
+se_csp_hsm_ip: ~
+se_csp_hsm_vnic_id: ~
 
 ### docker deployment parameters ###
 se_fresh_install: false

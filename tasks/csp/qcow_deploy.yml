@@ -28,6 +28,6 @@
       register: se_qcow_status
       failed_when: not se_qcow_status.stat.exists
     - name: Avi SE | CSP | Image deploy | SCP qcow to csp device
-      shell: sshpass -p {{ se_csp_password }} scp {{ se_image_name }} {{ se_csp_user }}@{{ inventory_hostname }}:/osp/repository
+      shell: sshpass -p {{ se_csp_password }} scp {{ se_csp_qcow_image_file }} {{ se_csp_user }}@{{ inventory_hostname }}:/osp/repository
       delegate_to: localhost
   when: se_image_exists.status != 200

@@ -39,7 +39,7 @@
         iso_name: "{{ se_csp_qcow_image_name }}"
         day0_filename: "{{ se_csp_metafile_name }}"
         numcpu: "{{ se_csp_num_cpu|int }}"
-        memory: "{{ se_csp_memory|int }}"
+        memory: "{{ se_csp_memory_mb|int }}"
         vnics:
           vnic:
             "{{ se_csp_vnics }}"

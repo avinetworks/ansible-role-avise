@@ -85,7 +85,7 @@ These are only marked required, for when you are using CSP Deployment.
 | `se_csp_disk_size` | No | `10` | Amount of disk space in GB for the SE. |
 | `se_csp_service_name` | No | `avi-se` | Name of the service to be created on the CSP. |
 | `se_csp_num_cpu` | No | `1` | Number of CPUs to be allocated to the SE. |
-| `se_csp_memory_gb` | No | `1` | Amount of memory in MB allocated to the SE. |
+| `se_csp_memory_gb` | No | `1` | Amount of memory in GB allocated to the SE. |
 | `se_csp_vnics` | No | See `defaults/main.yml` | Sets the interfaces for the SE service |
 | `se_csp_hsm_static_route` | No | `None` | Static route for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
 | `se_csp_hsm_ip` | No | `None` | IP Address and Subnet for Dedicated HSM interface, ex. 10.160.100.221/24 |
@@ -161,7 +161,7 @@ avinetworks.avisdk
       se_csp_service_name: avi-se
       se_csp_disk_size: 10
       se_csp_num_cpu: 2
-      se_csp_memory: 4
+      se_csp_memory_gb: 4
       se_csp_vnics:
         - nic: "0"
           type: access

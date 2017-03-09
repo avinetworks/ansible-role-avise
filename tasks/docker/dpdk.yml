@@ -1,16 +1,7 @@
 ---
 # se_dpdk tasks file for avinetworks.avise
-- name: Avi SE | DPDK | Install PCI Utils | yum
-  yum: name=pciutils
-  when: ansible_pkg_mgr == 'yum'
-
-- name: Avi SE | DPDK | Install PCI Utils | apt
-  apt: name=pciutils
-  when: ansible_pkg_mgr == 'apt'
-
-- name: Avi SE | DPDK | Install PCI Utils | dnf
-  dnf: name=pciutils
-  when: ansible_pkg_mgr == 'dnf'
+- name: Avi SE | DPDK | Install PCI Utils
+  package: name=pciutils
 
 - name: Avi SE | DPDK | Set facts
   set_fact:

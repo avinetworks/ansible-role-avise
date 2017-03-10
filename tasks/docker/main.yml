@@ -8,6 +8,12 @@
 - name: Avi SE | Perform specific os family tasks
   include: family/{{ ansible_os_family|lower }}.yml
 
+- name: Avi SE | Include OS specific variables
+  include_vars: os/{{ ansible_distribution|lower }}.yml
+
+- name: Avi SE | Perform specific os family tasks
+  include_vars: family/{{ ansible_os_family|lower }}.yml
+
 # We must do this step first just in case we need to override defaults from the supplied package
 - name: Avi SE | Docker | Package Deploy
   include: package_deploy.yml

@@ -6,7 +6,7 @@
 
 if [ -f /etc/default/avise ]; then
   . /etc/default/avise
-elif [ -f /etc/default/avise ]; then
+elif [ -f /etc/sysconfig/avise ]; then
   . /etc/sysconfig/avise
 else
   echo "Failed to start: missing defaults"

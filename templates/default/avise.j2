@@ -1,0 +1,12 @@
+# Defaults file for avise service used by /usr/sbin/avise
+
+### Set common variables ###
+
+# If you would like to change the location of the log file, you can modify the setting here.
+AVISE_LOGFILE="/var/log/avise.log"
+
+# If you'd like to modify the run parameters that are supplied to the service
+# you can take full control here. When starting the service engine we will use
+# /usr/bin/docker run ${AVISE_DOCKER_RUN_PARAMS} so anything you put in
+# here will be supplied in that manner.
+AVISE_DOCKER_RUN_PARAMS="{{ se_docker_run_params }}"

@@ -7,7 +7,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 
 ## Requirements
 
-- Docker is required and can be installed using `avinetworks.docker` or manually installed.  
+- Docker is required for `se_deploy_type: docker`, and can be installed using `avinetworks.docker` or manually installed.  
 
 - `avisdk` python library is required and can be installed by:  
 `pip install avisdk --upgrade`  

@@ -1,8 +1,9 @@
-avi.mgmt-ip.SE: {{ se_csp_mgmt_ip }}
-avi.mgmt-mask.SE: {{ se_csp_mgmt_mask }}
-avi.default-gw.SE: {{ se_csp_default_gw }}
 AVICNTRL: {{ se_master_ctl_ip }}
-{% if se_avi_token != None %}AVICNTRL_AUTHTOKEN: {{ se_avi_token }}{% endif %}
+AVICNTRL_AUTHTOKEN: {{ se_avi_token }}
+avi.mgmt-ip.SE: {{ se_csp_mgmt_ip }}
+avi.default-gw.SE: {{ se_csp_default_gw }}
+{% if se_csp_mgmt_mask != None %}avi.mgmt-mask.SE: {{ se_csp_mgmt_mask }}{% endif %}
+{% if se_csp_bond_ifs != None %}avi.bond-ifs.SE: {{ se_csp_bond_ifs }}{% endif %}
 {% if se_csp_tenant_uuid != None %}AVITENANT_UUID: {{ se_csp_tenant_uuid }}{% endif %}
 {% if se_csp_hsm_static_route != None %}avi.hsm-static-route.SE: {{ se_csp_hsm_static_route }}{% endif %}
 {% if se_csp_hsm_ip != None %}avi.hsm-ip.SE: {{ se_csp_hsm_ip }}{% endif %}

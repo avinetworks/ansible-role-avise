@@ -90,6 +90,7 @@ These are only marked required, for when you are using CSP Deployment.
 | `se_csp_hsm_static_route` | No | `None` | Static route for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
 | `se_csp_hsm_ip` | No | `None` | IP Address and Subnet for Dedicated HSM interface, ex. 10.160.100.221/24 |
 | `se_csp_hsm_vnic_id` | No | `None` | VNIC id, of the HSM interface |
+| `se_csp_bond_ifs` | No | `None` | The bond parameters for the service |
 
 
 ### Parameter Override Variables
@@ -177,6 +178,7 @@ avinetworks.avisdk
           passthrough_mode: sriov
           vlan: 201
           network_name: enp7s0f1
+      se_csp_bond_ifs: '1,2'
 ```
 
 ### Minimum Example

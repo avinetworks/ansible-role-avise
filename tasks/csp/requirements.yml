@@ -36,3 +36,4 @@
 - name: Avi SE | CSP | Requirements | SSHPass Check
   command: which sshpass
   changed_when: false
+  delegate_to: localhost

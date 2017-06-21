@@ -32,3 +32,7 @@
     - expr: se_csp_disk_size|int >= 10
       msg: "Must have 10GB or more disk size"
   when: not se_skip_requirements
+
+- name: Avi SE | CSP | Requirements | SSHPass Check
+  command: which sshpass
+  changed_when: false

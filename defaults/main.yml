@@ -58,6 +58,7 @@ se_csp_vnics:
     passthrough_mode: sriov
     vlan: 201
     network_name: enp7s0f1
+se_csp_meta_config: {}
 se_csp_meta_options:
   AVICNTRL: "{{ se_master_ctl_ip }}"
   AVICNTRL_AUTHTOKEN: "{{ se_avi_token }}"

@@ -61,6 +61,7 @@ se_csp_vnics:
 se_csp_hsm_static_route: ~
 se_csp_hsm_ip: ~
 se_csp_hsm_vnic_id: ~
+se_csp_bond_ifs: ~
 
 ### docker deployment parameters ###
 se_fresh_install: false

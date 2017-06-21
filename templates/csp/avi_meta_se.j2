@@ -1,10 +1,6 @@
-AVICNTRL: {{ se_master_ctl_ip }}
-AVICNTRL_AUTHTOKEN: {{ se_avi_token }}
-avi.mgmt-ip.SE: {{ se_csp_mgmt_ip }}
-avi.default-gw.SE: {{ se_csp_default_gw }}
-{% if se_csp_mgmt_mask != None %}avi.mgmt-mask.SE: {{ se_csp_mgmt_mask }}{% endif %}
-{% if se_csp_bond_ifs != None %}avi.bond-ifs.SE: {{ se_csp_bond_ifs }}{% endif %}
-{% if se_csp_tenant_uuid != None %}AVITENANT_UUID: {{ se_csp_tenant_uuid }}{% endif %}
-{% if se_csp_hsm_static_route != None %}avi.hsm-static-route.SE: {{ se_csp_hsm_static_route }}{% endif %}
-{% if se_csp_hsm_ip != None %}avi.hsm-ip.SE: {{ se_csp_hsm_ip }}{% endif %}
-{% if se_csp_hsm_vnic_id != None %}avi.hsm-vnic-id.SE: {{ se_csp_hsm_vnic_id }}{% endif %}
+{% for key,value in se_csp_meta_options.iteritems() %}
+{% if value != '' %}
+{% set myvalue = se_csp_meta_config.update({ key: value }) %}
+{% endif %}
+{% endfor %}
+{{ se_csp_meta_config | to_nice_yaml }}

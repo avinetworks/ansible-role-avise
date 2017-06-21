@@ -87,9 +87,14 @@ These are only marked required, for when you are using CSP Deployment.
 | `se_csp_num_cpu` | No | `1` | Number of CPUs to be allocated to the SE. |
 | `se_csp_memory_gb` | No | `1` | Amount of memory in GB allocated to the SE. |
 | `se_csp_vnics` | No | See `defaults/main.yml` | Sets the interfaces for the SE service |
-| `se_csp_hsm_static_route` | No | `None` | Static route for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
 | `se_csp_hsm_ip` | No | `None` | IP Address and Subnet for Dedicated HSM interface, ex. 10.160.100.221/24 |
+| `se_csp_hsm_mask` | No | `None` | |
+| `se_csp_hsm_static_routes` | No | `None` | Static routes for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
 | `se_csp_hsm_vnic_id` | No | `None` | VNIC id, of the HSM interface |
+| `se_csp_asm_ip` | No | `None` | IP Address and Subnet for Dedicated ASM interface, ex. 10.160.100.221/24|
+| `se_csp_asm_mask` | No | `None` | |
+| `se_csp_asm_static_routes` | No | `None` | Static routes for ASM |
+| `se_csp_asm_vnic_id` | No | `None` | |
 | `se_csp_bond_ifs` | No | `None` | The bond parameters for the service |
 
 

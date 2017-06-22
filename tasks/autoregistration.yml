@@ -11,12 +11,20 @@
     - se_master_ctl_username
     - se_master_ctl_password
 
+- uri:
+    url: https://{{ se_master_ctl_ip }}/api/initial-data
+  register: controller_api_version_data
+
+- debug: msg="You are running Controller verison: {{ controller_api_version_data.version.Version }}"
+
+# Error Invalid Version on 17.x systems    #
 - name: Avi SE | Autoregistration | Get the cloud uuid from se_cloud_name
   avi_api_session:
     controller: "{{ se_master_ctl_ip }}"
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
     tenant: "{{ se_tenant }}"
+    api_version: {{ controller_api_version_data.version.Version }}
     http_method: get
     path: "cloud?name={{ se_cloud_name }}"
   register: se_cloud_data
@@ -28,6 +36,7 @@
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
     tenant: "{{ se_tenant }}"
+    api_version: {{ controller_api_version_data.version.Version }}
     http_method: get
     path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid}}
   register: se_authtoken

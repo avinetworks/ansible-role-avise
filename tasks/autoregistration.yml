@@ -20,7 +20,7 @@
 
 - name: Avi SE | Autoregistration | Set Controller version information
   set_fact:
-    controller_api_version: "{{ controller_initial_data.version.Version }}"
+    controller_api_version: "{{ controller_initial_data.json.version.Version }}"
   when: controller_initial_data
 
 - debug: msg="You are running Controller verison {{ controller_api_version }}"

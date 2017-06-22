@@ -25,7 +25,7 @@
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
     tenant: "{{ se_tenant }}"
-    api_version: {{ controller_api_version_data.version.Version }}
+    api_version: "{{ controller_api_version_data.version.Version }}"
     http_method: get
     path: "cloud?name={{ se_cloud_name }}"
   register: se_cloud_data
@@ -37,7 +37,7 @@
     username: "{{ se_master_ctl_username }}"
     password: "{{ se_master_ctl_password }}"
     tenant: "{{ se_tenant }}"
-    api_version: {{ controller_api_version_data.version.Version }}
+    api_version: "{{ controller_api_version_data.version.Version }}"
     http_method: get
     path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid}}
   register: se_authtoken

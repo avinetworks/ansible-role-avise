@@ -13,6 +13,7 @@
 
 - uri:
     url: "https://{{ se_master_ctl_ip }}/api/initial-data"
+    validate_certs: no
   register: controller_api_version_data
 
 - debug: msg="You are running Controller verison {{ controller_api_version_data.version.Version }}"

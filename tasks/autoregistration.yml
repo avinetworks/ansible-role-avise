@@ -12,10 +12,10 @@
     - se_master_ctl_password
 
 - uri:
-    url: https://{{ se_master_ctl_ip }}/api/initial-data
+    url: "https://{{ se_master_ctl_ip }}/api/initial-data"
   register: controller_api_version_data
 
-- debug: msg="You are running Controller verison: {{ controller_api_version_data.version.Version }}"
+- debug: msg="You are running Controller verison {{ controller_api_version_data.version.Version }}"
 
 # Error Invalid Version on 17.x systems    #
 - name: Avi SE | Autoregistration | Get the cloud uuid from se_cloud_name

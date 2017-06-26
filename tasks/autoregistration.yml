@@ -25,7 +25,6 @@
 
 - debug: msg="You are running Controller verison {{ controller_api_version }}"
 
-# Error Invalid Version on 17.x systems    #
 - name: Avi SE | Autoregistration | Get the cloud uuid from se_cloud_name
   avi_api_session:
     controller: "{{ se_master_ctl_ip }}"

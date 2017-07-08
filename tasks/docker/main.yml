@@ -36,8 +36,8 @@
 # This section must go after se_package_deploy, as se_version is extracted from the output
 - name: Avi SE | Docker | Service | Set service fact for deploy
   set_fact:
-    se_old_service: "{{ se_version|version_compare('17.0.0', '<') or se_version == 'latest' }}"
-    se_new_service: "{{ se_version|version_compare('17.0.0', '>=') and se_version != 'latest' }}"
+    se_old_service: "{{ se_version|version_compare('17.3.0', '<') or se_version == 'latest' }}"
+    se_new_service: "{{ se_version|version_compare('17.3.0', '>=') and se_version != 'latest' }}"
 
 - name: Avi SE | Install DPDK
   include: se_dpdk.yml
@@ -52,8 +52,8 @@
 
 - name: Avi SE | Docker | Services | Append the token to the docker environment variables.
   set_fact:
-    se_env_variables_all: "{{ se_env_variables_all }} + ['AVICOOKIE={{ se_avi_token }}']"
-  when: se_avi_token is defined
+    se_env_variables_all: "{{ se_env_variables_all }} + ['AVICOOKIE={{ se_auth_token }}']"
+  when: se_auth_token is defined
 
 - name: Avi SE | Docker | Cleanup
   include: services/cleanup.yml

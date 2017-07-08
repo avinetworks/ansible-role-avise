@@ -12,8 +12,10 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 - `avisdk` python library is required and can be installed by:  
 `pip install avisdk --upgrade`  
 
-- Requires the `avinetworks.avisdk` role to be installed. To install these use the following command:  
-  `ansible-galaxy install -f avinetworks.avisdk`  
+## Role Dependencies
+
+- avinetworks.avisdk
+  - To install these use the following command: `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
 ### Setting Deployment type
@@ -88,13 +90,13 @@ These are only marked required, for when you are using CSP Deployment.
 | `se_csp_memory_gb` | No | `1` | Amount of memory in GB allocated to the SE. |
 | `se_csp_vnics` | No | See `defaults/main.yml` | Sets the interfaces for the SE service |
 | `se_csp_hsm_ip` | No | `None` | IP Address and Subnet for Dedicated HSM interface, ex. 10.160.100.221/24 |
-| `se_csp_hsm_mask` | No | `None` | |
+| `se_csp_hsm_mask` | No | `None` | Netmask of the interface that will talk to HSM |
 | `se_csp_hsm_static_routes` | No | `None` | Static routes for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
-| `se_csp_hsm_vnic_id` | No | `None` | VNIC id, of the HSM interface |
+| `se_csp_hsm_vnic_id` | No | `None` | VNIC id, of the HSM interface configured on this interface ex. 1 |
 | `se_csp_asm_ip` | No | `None` | IP Address and Subnet for Dedicated ASM interface, ex. 10.160.100.221/24|
-| `se_csp_asm_mask` | No | `None` | |
-| `se_csp_asm_static_routes` | No | `None` | Static routes for ASM |
-| `se_csp_asm_vnic_id` | No | `None` | |
+| `se_csp_asm_mask` | No | `None` | Netmask of the interface that will talk to ASM |
+| `se_csp_asm_static_routes` | No | `None` | Static routes for ASM, ex. 10.128.1.0/24 via 10.160.100.1 |
+| `se_csp_asm_vnic_id` | No | `None` | VNIC id, of the ASM interface configured on this interface ex. 1 |
 | `se_csp_bond_ifs` | No | `None` | The bond parameters for the service |
 
 
@@ -121,10 +123,6 @@ se_mounts_all:
   - "/var/run/docker.sock:/var/run/docker.sock"
   - "/opt/avi/se/data:/vol/"
 ```
-
-## Dependencies
-
-avinetworks.avisdk
 
 ## Example Playbooks
 
@@ -195,6 +193,17 @@ avinetworks.avisdk
       se_master_ctl_ip: 10.10.27.101
       se_master_ctl_username: admin
       se_master_ctl_password: avi123
+```
+
+### Example without Auto-registration
+```
+
+- hosts: all
+  roles:
+    - role: avinetworks.docker
+    - role: avinetworks.avise
+      se_master_ctl_ip: 10.10.27.101
+      se_auth_token: "{{ se_auth_token }}"
 ```
 
 ## License

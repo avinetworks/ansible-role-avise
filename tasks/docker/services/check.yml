@@ -9,5 +9,5 @@
 
 - name: Avi SE | Docker | Services | Capture AVICOOKIE from docker run params
   set_fact:
-    se_avi_token: "{{ se_existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
+    se_auth_token: "{{ se_existing_run_params|regex_replace('^.*AVICOOKIE=','')|regex_replace('--net.*','')|trim}}"
   when: se_existing_run_params is defined and not se_fresh_install

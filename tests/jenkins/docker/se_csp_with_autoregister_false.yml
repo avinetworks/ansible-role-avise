@@ -1,0 +1,54 @@
+# ansible-playbook se_csp_with_autoregister_true.yml -i 10.70.160.54, \
+#   --ask-pass \
+#   --ask-become-pass \
+#   -e "\
+#     controller_ip=10.70.160.51 \
+#     controller_username=admin \
+#     controller_password=AviNetworks123!" \
+#   -u root
+
+- hosts: all
+  become: yes
+  gather_facts: false
+  pre_tasks:
+    - include_role: name=avinetworks.avisdk
+    - include: autoregistration.yml
+      vars:
+        se_master_ctl_ip: "{{ controller_ip }}"
+        se_master_ctl_username: "{{ controller_username }}"
+        se_master_ctl_password: "{{ controller_password }}"
+        se_tenant: admin
+        se_cloud_name: Default-Cloud
+  roles:
+    - role: avinetworks.avisdk
+    - role: avinetworks.avise
+      se_deploy_type: csp
+      se_csp_user: admin
+      se_csp_password: password
+      se_master_ctl_ip: "{{ controller_ip }}"
+      se_master_ctl_username: "{{ controller_username }}"
+      se_master_ctl_password: "{{ controller_password }}"
+      se_csp_qcow_image_file: avi-se.qcow2
+      se_csp_mgmt_ip: 10.128.2.20
+      se_csp_mgmt_mask: 255.255.255.0
+      se_csp_default_gw: 10.128.2.1
+      se_csp_service_name: avi-se
+      se_csp_disk_size: 10
+      se_csp_num_cpu: 2
+      se_csp_memory_gb: 4
+      se_csp_vnics:
+        - nic: "0"
+          type: access
+          tagged: "false"
+          network_name: enp1s0f0
+        - nic: 1
+          type: passthrough
+          passthrough_mode: sriov
+          vlan: 200
+          network_name: enp7s0f0
+        - nic: 2
+          type: passthrough
+          passthrough_mode: sriov
+          vlan: 201
+          network_name: enp7s0f1
+      se_csp_bond_ifs: '1,2'

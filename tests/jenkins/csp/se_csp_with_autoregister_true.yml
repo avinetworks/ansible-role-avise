@@ -9,20 +9,13 @@
 
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: Get Controller information
-      uri:
-        url: "https://{{ se_master_ctl_ip }}/api/initial-data"
-        validate_certs: no
-      register: controller_initial_data
-      delegate_to: localhost
+  gather_facts: false
   roles:
     - role: avinetworks.avisdk
     - role: avinetworks.avise
       se_deploy_type: csp
       se_csp_user: admin
       se_csp_password: password
-      se_version: "{{ controller_initial_data.json.version.Tag }}"
       se_master_ctl_ip: "{{ controller_ip }}"
       se_master_ctl_username: "{{ controller_username }}"
       se_master_ctl_password: "{{ controller_password }}"

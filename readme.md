@@ -1,6 +1,5 @@
 # avinetworks.avise
 
-[![Build Status](https://travis-ci.org/avinetworks/ansible-role-avise.svg?branch=master)](https://travis-ci.org/avinetworks/ansible-role-avise)
 [![Ansible Galaxy](https://img.shields.io/badge/galaxy-avinetworks.avise-blue.svg)](https://galaxy.ansible.com/avinetworks/avise/)
 
 Using this module you are able to install the Avi Vantage Service Engine, to your system. However, minimum requirements must be met.

@@ -30,4 +30,5 @@
     - name: Avi SE | CSP | Image deploy | SCP qcow to csp device
       shell: sshpass -p {{ se_csp_password }} scp -o StrictHostKeyChecking=no {{ se_csp_qcow_image_file }} {{ se_csp_user }}@{{ inventory_hostname }}:/osp/repository
       delegate_to: localhost
+      failed_when: false
   when: se_image_exists.status != 200

@@ -25,7 +25,7 @@ se_package_dest: /tmp/se_docker.tgz
 se_docker_repo: ~
 se_docker_repo_user: ~
 se_docker_repo_password: ~
-se_version: latest
+se_version: 16.4.4-9007-20170506.145733
 se_image: "avinetworks/se:{{ se_version }}"
 
 # parameters for the CSP deployment

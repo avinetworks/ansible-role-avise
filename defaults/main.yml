@@ -38,6 +38,8 @@ se_csp_mgmt_mask: ~
 se_csp_default_gw: ~
 se_csp_tenant_uuid: ~
 se_csp_disk_size: 64
+se_csp_disk_type: virtio
+se_csp_platform: csp-2100
 se_csp_service_name: avi-se
 se_csp_metafile_name: avi_meta_{{ se_csp_service_name }}.yml
 se_csp_num_cpu: 4

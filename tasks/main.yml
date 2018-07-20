@@ -3,6 +3,11 @@
 
 # This task will appropriately start the selected type of deployment.
 # It was added to prevent mass "skipped" messages when deploying Avi.
+- name: Check ansible version
+  when:
+    - ansible_version.full is version_compare('2.4', '<')
+  debug: msg="This role works best with ansible version 2.4 or grater. It is recomended to use latest ansible versions for best experiance."
+
 - name: Avi SE | Set facts
   set_fact:
     se_autoregister: false

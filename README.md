@@ -110,46 +110,6 @@ se_mounts_all:
       se_memory_gb: 12
 ```
 
-### CSP Deployment Example
-```
-
----
-- hosts: csp_devices
-  gather_facts: false
-  roles:
-    - role: avinetworks.avise
-      se_deploy_type: csp
-      se_csp_user: admin
-      se_csp_password: password
-      se_master_ctl_ip: 10.128.2.20
-      se_master_ctl_username: admin
-      se_master_ctl_password: password
-      se_csp_qcow_image_file: avi-se.qcow2
-      se_csp_mgmt_ip: 10.128.2.20
-      se_csp_mgmt_mask: 255.255.255.0
-      se_csp_default_gw: 10.128.2.1
-      se_csp_service_name: avi-se
-      se_csp_disk_size: 10
-      se_csp_num_cpu: 2
-      se_csp_memory_gb: 4
-      se_csp_vnics:
-        - nic: "0"
-          type: access
-          tagged: "false"
-          network_name: enp1s0f0
-        - nic: 1
-          type: passthrough
-          passthrough_mode: sriov
-          vlan: 200
-          network_name: enp7s0f0
-        - nic: 2
-          type: passthrough
-          passthrough_mode: sriov
-          vlan: 201
-          network_name: enp7s0f1
-      se_csp_bond_ifs: '1,2'
-```
-
 ### Minimum Example
 ```
 

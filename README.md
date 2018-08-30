@@ -70,37 +70,6 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `se_mounts_extras` | No | `[]` | Extra mounting points to be used by the service engine. <br>No need to include the `-v` |
 | `se_env_variables_extras` | No | `[]` | Extra environment variables to be used by the service engine. <br>No need to include `-e` |
 
-### CSP Deployment Variables
-These are only marked required, for when you are using CSP Deployment.
-
-| Variable | Required | Default | Comments |
-|----------|----------|---------|----------|
-| `se_csp_user` | Yes | `None` | Username that will be used to connect to the CSP server. |
-| `se_csp_password` | Yes | `None` | Password required to authenticate the user. |
-| `se_csp_qcow_image_file` | No | `se.qcow` | Relative or absolute location of the SE qcow. |
-| `se_csp_mgmt_ip` | Yes | `None` | IP of the SE on the management network. |
-| `se_csp_mgmt_mask` | Yes | `None` | Subnet mask that the SE will require. |
-| `se_csp_default_gw` | Yes | `None` | Default gateway for the SE. |
-| `se_csp_authtoken` | No | Auto | Token which will authenticate the SE to the controller. |
-| `se_csp_tenant_uuid` | No | `None` | UUID of the Tenant the SE will use. If left as `None` will use Admin se_tenant. |
-| `se_csp_disk_size` | No | `10` | Amount of disk space in GB for the SE. |
-| `se_csp_disk_type` | No | `virtio` | CSP disk type. Recommended to use default type of virtio. |
-| `se_csp_service_name` | No | `avi-se` | Name of the service to be created on the CSP. |
-| `se_csp_num_cpu` | No | `1` | Number of CPUs to be allocated to the SE. |
-| `se_csp_memory_gb` | No | `1` | Amount of memory in GB allocated to the SE. |
-| `se_csp_vnics` | No | See `defaults/main.yml` | Sets the interfaces for the SE service |
-| `se_csp_hsm_ip` | No | `None` | IP Address and Subnet for Dedicated HSM interface, ex. 10.160.100.221/24 |
-| `se_csp_hsm_mask` | No | `None` | Netmask of the interface that will talk to HSM |
-| `se_csp_hsm_static_routes` | No | `None` | Static routes for HSM, ex. 10.128.1.0/24 via 10.160.100.1 |
-| `se_csp_hsm_vnic_id` | No | `None` | VNIC id, of the HSM interface configured on this interface ex. 1 |
-| `se_csp_asm_ip` | No | `None` | IP Address and Subnet for Dedicated ASM interface, ex. 10.160.100.221/24|
-| `se_csp_asm_mask` | No | `None` | Netmask of the interface that will talk to ASM |
-| `se_csp_asm_static_routes` | No | `None` | Static routes for ASM, ex. 10.128.1.0/24 via 10.160.100.1 |
-| `se_csp_asm_vnic_id` | No | `None` | VNIC id, of the ASM interface configured on this interface ex. 1 |
-| `se_csp_bond_ifs` | No | `None` | The bond parameters for the service |
-| `se_csp_platform` | No | `csp-2100` | CSP platform model |
-
-
 ### Parameter Override Variables
 However, you are able to provide these parameters another way. Using the following variables. This will allow the user to customize all values.  
 **!!!BEWARE: USING THIS WILL ERASE DEFAULTS - USE WITH CAUTION!!!**

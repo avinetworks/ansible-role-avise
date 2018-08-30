@@ -17,10 +17,6 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
   - To install these use the following command: `ansible-galaxy install -f avinetworks.avisdk`  
 
 ## Role Variables
-### Setting Deployment type
-| Variable | Required | Default | Comments |
-|----------|----------|---------|----------|
-| `se_deploy_type` | No | `docker` | Sets the type of deployment that should be triggered. Valid options: `docker`, `csp` |
 
 ### Standard Parameters
 | Variable | Required | Default | Comments |

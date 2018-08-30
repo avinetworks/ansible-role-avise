@@ -20,6 +20,39 @@
       - "se_max_cores|int >= 1"
       - "se_cores|int <= se_max_cores|int"
   when: not se_skip_requirements
+- name:  Check if avicontroller present on same host
+  shell: "docker ps | grep avicontroller | wc -l"
+  register: result
+  changed_when: false
+  become: true
+
+- block:
+  - name: if avicontroller present, set facts for cpu and memory
+    shell: "docker exec avicontroller env | grep NUM_CPU | wc -l"
+    register: c_cpu
+  - shell: "docker exec avicontroller env | grep NUM_CPU | sed -e 's/=/ /g' | awk '{print $2}'"
+    register: temp
+    when: c_cpu.stdout|int == 1
+  - set_fact:
+      controller_cpu: "{{ temp.stdout }}"
+  - shell: "docker exec avicontroller env | grep NUM_MEMG | wc -l"
+    register: c_mem
+  - shell: "docker exec avicontroller env | grep NUM_MEMG | sed -e 's/=/ /g' | awk '{print $2}'"
+    register: temp
+    when: c_mem.stdout|int == 1
+  - set_fact:
+      controller_mem: "{{ temp.stdout }}"
+  - set_fact:
+      se_cores: "{{ se_max_cores|int - controller_cpu|int }}"
+    when: (se_cores|int + controller_cpu|int) > se_max_cores|int
+  - assert:
+      that:
+        - "se_cores|int > 0"
+  - set_fact:
+      se_memory_gb: "{{ se_ansible_memtotal_gb|int - controller_mem|int }}"
+    when: (se_memory_gb|int + controller_mem|int) > se_ansible_memtotal_gb|int
+  when: result.stdout|int == 1
+  become: true
 
 - name: Avi SE | Requirements | Fresh install steps
   include: fresh_install.yml

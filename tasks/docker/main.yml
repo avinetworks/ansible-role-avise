@@ -40,7 +40,7 @@
     se_new_service: "{{ se_version|version_compare('17.3.0', '>=') and se_version != 'latest' }}"
 
 - name: Avi SE | Install DPDK
-  include: se_dpdk.yml
+  include: dpdk.yml
   when: se_dpdk
 
 - name: Avi SE | Docker | Services | Service checks

@@ -34,35 +34,3 @@
   shell: lspci | grep "Ethernet" | grep "Intel Corporation" | egrep -i "{{ se_dpdk_supported_nics }}"
   register: se_dpdk_test_array
   changed_when: false
-
-- name: Avi SE | DPDK | Create destination directories
-  file: path={{ item }} state=directory mode=0755
-  with_items:
-    - /tmp/dpdk_klms
-    - /opt/avi/kmod
-
-- name: Avi SE | DPDK | Copy and Unarchive the DPDK KLMS
-  unarchive: src={{ se_dpdk_klms_file }} dest=/tmp/dpdk_klms
-
-- name: Avi SE | DPDK | Check that DPDK KLMS exist for the current kernel | 1/2.
-  stat: path=/tmp/dpdk_klms/precompiled-klms/{{ ansible_kernel }}
-  register: se_ansible_kernel_dpdk_klms
-  failed_when: false
-
-- name: Avi SE | DPDK | Check that DPDK KLMS exist for the current kernel | 2/2.
-  stat: path=/tmp/dpdk_klms/precompiled-klms/{{ se_klm_ver }}
-  when: not se_ansible_kernel_dpdk_klms.stat.exists
-  register: se_klm_ver_dpdk_klms
-  failed_when: false
-
-- name: Avi SE | DPDK | Failed to find supported DPDK KLMS for current kernel.
-  fail: msg="Could not find DPDK KLMS for {{ se_klm_ver }} or {{ ansible_kernel }}"
-  when: not se_ansible_kernel_dpdk_klms.stat.exists and not se_klm_ver_dpdk_klms.stat.exists
-
-- name: Avi SE | DPDK | Copy DPDK KLMS | 1/2
-  shell: cp /tmp/dpdk_klms/precompiled-klms/{{ ansible_kernel }}/* /opt/avi/kmod/
-  when: se_ansible_kernel_dpdk_klms.stat.exists
-
-- name: Avi SE | DPDK | Copy DPDK KLMS | 2/2
-  shell: cp /tmp/dpdk_klms/precompiled-klms/{{ se_klm_ver }}/* /opt/avi/kmod/
-  when: not se_ansible_kernel_dpdk_klms.stat.exists and se_klm_ver_dpdk_klms.stat.exists

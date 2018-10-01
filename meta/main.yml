@@ -1,5 +1,5 @@
 galaxy_info:
-  author: Eric Anderson
+  author: Avi Networks
   description: Deploy's the AVI Vantage Service Engine
   company: Avi Networks
   issue_tracker_url: https://github.com/avinetworks/ansible-role-avise/issues

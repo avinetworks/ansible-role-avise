@@ -110,9 +110,9 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 
 ## License
 
-BSD
+Apache 2.0
 
 ## Author Information
 
-Eric Anderson  
+Avi Networks  
 [Avi Networks](http://avinetworks.com)

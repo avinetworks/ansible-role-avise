@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: avise
   author: Avi Networks
   description: Deploy's the AVI Vantage Service Engine
   company: Avi Networks

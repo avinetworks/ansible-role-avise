@@ -1,10 +1,11 @@
 galaxy_info:
-  author: Eric Anderson
+  role_name: avise
+  author: Avi Networks
   description: Deploy's the AVI Vantage Service Engine
   company: Avi Networks
   issue_tracker_url: https://github.com/avinetworks/ansible-role-avise/issues
   license: BSD
-  min_ansible_version: 2.0.0
+  min_ansible_version: 2.4.0
   github_branch: master
   platforms:
   - name: EL

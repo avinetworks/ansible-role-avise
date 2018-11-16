@@ -8,7 +8,7 @@ lint:
   options:
     config-file: molecule/default/.yamllint
 platforms:
-  - name: instance
+  - name: ${MOLECULE_DISTRO:-ubuntu:bionic}
     image: ${MOLECULE_DISTRO:-ubuntu:bionic}
     privileged: true
     service_manager: ${MOLECULE_SERVICE_MANAGER:-systemd}

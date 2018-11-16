@@ -3,4 +3,5 @@
   hosts: all
   roles:
     - role: avinetworks.docker
+    - role: avinetworks.avisdk
     - role: avinetworks.avise

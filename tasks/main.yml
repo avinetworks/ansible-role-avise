@@ -14,4 +14,4 @@
   when: se_auth_token != None
 
 - name: Avi SE | Deployment
-  include: "{{ se_deploy_type }}/main.yml"
+  include: "docker/main.yml"

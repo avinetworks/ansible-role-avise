@@ -1,9 +1,6 @@
 ---
 # Variable defaults file for avinetworks.avise
 
-# set the type of deployment
-se_deploy_type: docker
-
 # standard parameters
 se_skip_requirements: false
 

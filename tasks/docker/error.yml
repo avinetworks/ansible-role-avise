@@ -1,0 +1,7 @@
+---
+- block:
+  - shell: "echo {{ error_string }} > /tmp/log"
+  - fetch: src=/tmp/log dest=/tmp/log
+  - file: path=/tmp/log state=absent
+  - fail: msg="{{ error_string }}"
+  become: true

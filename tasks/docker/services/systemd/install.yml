@@ -1,26 +1,10 @@
 ---
-- block:
-    - name: Avi SE | Services | systemd | 16.x | Deploy the avise service
-      template:
-        src: 16.x/avise.service.j2
-        dest: /etc/systemd/system/avise.service
-        mode: 0644
-      register: avise_service_16
-      notify:
-        - Avi SE | Services | systemd | Daemon reload
-        - Avi SE | Services | Restart the avise service
-    - set_fact: avise_service={{ avise_service_16 }}
-  when: se_old_service
-
-- block:
-    - name: Avi SE | Services | systemd | 17.x | Deploy the avise service
-      copy:
-        src: systemd/avise.service
-        dest: /etc/systemd/system/avise.service
-        mode: 0644
-      register: avise_service_17
-      notify:
-        - Avi SE | Services | systemd | Daemon reload
-        - Avi SE | Services | Restart the avise service
-    - set_fact: avise_service={{ avise_service_17 }}
-  when: se_new_service
+- name: systemd | Deploy the avise service
+  copy:
+    src: systemd/avise.service
+    dest: /etc/systemd/system/avise.service
+    mode: 0644
+  become: true
+  notify:
+    - Avi SE | Services | systemd | Daemon reload
+    - Avi SE | Services | Restart the avise service

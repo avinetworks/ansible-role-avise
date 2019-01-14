@@ -21,7 +21,7 @@
 
 start() {
     echo "Starting avise watcher"
-    nohup /etc/init.d/avise_watcher.sh 0<&- &>/dev/null &
+    nohup /etc/init.d/avise_watcher.sh 0<&- 1>/dev/null 2>&1 &
 }
 
 stop() {

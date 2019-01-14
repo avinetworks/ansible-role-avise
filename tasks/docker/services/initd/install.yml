@@ -1,40 +1,21 @@
 ---
-- name: Avi SE | Services | init.d | Set container env for non-systemd
-  set_fact:
-    se_env_variables_extras: "{{ se_env_variables_extras + ['NON_SYSTEMD=1'] }}"
-
 - block:
-    - name: Avi SE | Services | init.d | 16.x | Deploy the avise service
-      template: src=16.x/avise.j2 dest=/etc/init.d/avise mode=0755
-      register: avise_service_16
-      notify: Avi SE | Services | init.d | Restart the avise_watcher service
-    - set_fact: avise_service={{ avise_service_16 }}
-  when: se_old_service
-
-- block:
-    - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
-      copy: src=init/avise dest=/etc/init.d/avise mode=0755
-      register: avise_service_17
-      notify: Avi SE | Services | init.d | Restart the avise_watcher service
-    - set_fact: avise_service={{ avise_service_17 }}
-  when: se_new_service
-
-- name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script
-  copy: src=init/avise_watcher.sh dest=/etc/init.d/avise_watcher.sh mode=0755
-  register: avise_watcher_sh
-
-- name: Avi SE | Services | init.d | Deploy the avise_watcher service
-  copy: src=init/avise_watcher dest=/etc/init.d/avise_watcher mode=0755
-  register: avise_watcher_service
-  notify: Avi SE | Services | init.d | Restart the avise_watcher service
-
-- name: Avi SE | Services | init.d | Deploying avise_watcher rc links
-  file: src=/etc/init.d/avise_watcher dest={{ item }} state=link
-  with_items:
-    - /etc/rc0.d/K99avise_watcher
-    - /etc/rc1.d/K99avise_watcher
-    - /etc/rc2.d/S99avise_watcher
-    - /etc/rc3.d/S99avise_watcher
-    - /etc/rc4.d/S99avise_watcher
-    - /etc/rc5.d/S99avise_watcher
-    - /etc/rc6.d/K99avise_watcher
+  - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
+    copy: src=init/avise dest=/etc/init.d/avise mode=0755
+    notify: Avi SE | Services | init.d | Restart the avise_watcher service
+  - name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script
+    copy: src=init/avise_watcher.sh dest=/etc/init.d/avise_watcher.sh mode=0755
+  - name: Avi SE | Services | init.d | Deploy the avise_watcher service
+    copy: src=init/avise_watcher dest=/etc/init.d/avise_watcher mode=0755
+    notify: Avi SE | Services | init.d | Restart the avise_watcher service
+  - name: Avi SE | Services | init.d | Deploying avise_watcher rc links
+    file: src=/etc/init.d/avise_watcher dest={{ item }} state=link
+    with_items:
+      - /etc/rc0.d/K99avise_watcher
+      - /etc/rc1.d/K99avise_watcher
+      - /etc/rc2.d/S99avise_watcher
+      - /etc/rc3.d/S99avise_watcher
+      - /etc/rc4.d/S99avise_watcher
+      - /etc/rc5.d/S99avise_watcher
+      - /etc/rc6.d/K99avise_watcher
+  become: true

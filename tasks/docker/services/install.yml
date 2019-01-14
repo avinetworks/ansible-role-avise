@@ -1,26 +1,13 @@
 ---
-- block:
-    - name: Avi SE | Services | init.d | 16.x | Install the Avi SE service
-      include: "systemd/install.yml"
-      when: ansible_service_mgr == "systemd"
-    - name: Avi SE | Services | init.d | 16.x | Install the Avi SE service
-      include: "initd/install.yml"
-      when: ansible_service_mgr != "systemd"
-  when: se_old_service
+- name: Set container env for non-systemd
+  set_fact:
+    se_env_variables_extras: "{{ se_env_variables_extras + ['NON_SYSTEMD=1'] }}"
+  when: ansible_service_mgr != "systemd"
 
-- block:
-    - name: Avi SE | Services | 17.x | Install the Avi SE service file
-      template: src=avise.j2 dest=/usr/sbin/avise mode=0755
-      notify: Avi SE | Services | Restart the avise service
-    - name: Avi SE | Services | 17.x | Deploy the defaults file
-      template:
-        src: default/avise.j2
-        dest: "{{ avise_default_file }}"
-        mode: 0644
-    - name: Avi SE | Services | {{ ansible_service_mgr }} | 17.x | Install the Avi SE service
-      include: "{{ ansible_service_mgr }}/install.yml"
-  when: se_new_service
+- name: Copy template to remote machine
+  template: src=avise.j2 dest=/usr/sbin/avise mode=0755
+  become: true
+  notify: Avi SE | Services | Restart the avise service
 
-- name: Avi SE | Services | {{ ansible_service_mgr }} | Start the service since it's not running
-  service: name=avise enabled=yes state=started
-  when: se_desired_running.stdout == ""
+- name: Include the corresponding service
+  include: "{{ ansible_service_mgr }}/install.yml"

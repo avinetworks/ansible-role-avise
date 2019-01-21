@@ -49,6 +49,15 @@ se_dpdk_supported_nics: "82599|82598|X540|X710|XL710"
 se_dpdk_pre: ~
 se_dpdk_post: ~
 
+# Set default values
+s_disk_gb: "{{ se_disk_gb | default(omit)}}"
+s_cores: "{{ se_cores | default(omit)}}"
+s_memory_gb: "{{ se_memory_gb | default(omit)}}"
+s_logs_disk_gb: "{{ se_logs_disk_gb | default(omit)}}"
+se_uuid: "10.10.24.41-avitag-1"
+sysint_port: 8443
+ssh_port: 22
+
 # Mount variables which are sent to the docker container, these are used in the service templates.
 se_mounts_extras: []
 se_mounts_default:

@@ -11,10 +11,7 @@ se_skip_requirements: false
 
 # se_autoregister parameters
 se_autoregister: true
-se_auth_token: ~
 se_master_ctl_ip: ~
-se_master_ctl_username: ~
-se_master_ctl_password: ~
 se_cloud_name: Default-Cloud
 se_tenant: admin
 
@@ -27,8 +24,6 @@ se_package_dest: ~/se_docker.tgz
 se_docker_repo: ~
 se_docker_repo_user: ~
 se_docker_repo_password: ~
-se_version: latest
-se_image: "avinetworks/se:{{ se_version }}"
 
 ### docker deployment parameters ###
 se_fresh_install: false

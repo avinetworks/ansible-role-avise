@@ -14,6 +14,16 @@
 
 - debug: msg="You are running Controller verison {{ controller_api_version }}"
 
+- name: Avi SE | Autoregistration | Set se_version
+  set_fact:
+    se_version: "{{ controller_initial_data.json.version.Tag }}"
+  when: se_version is undefined
+
+- name: Avi SE | Set SE Image Name
+  set_fact:
+    se_image: "avinetworks/se:{{ se_version }}"
+  when: se_version is defined
+
 - name: Avi SE | Autoregistration | Get the cloud uuid from se_cloud_name
   avi_api_session:
     controller: "{{ se_master_ctl_ip }}"
@@ -24,6 +34,7 @@
     http_method: get
     path: "cloud?name={{ se_cloud_name }}"
   register: se_cloud_data
+  when: cloud_uuid is undefined
   delegate_to: localhost
 
 - name: Avi SE | Autoregistration | Get a token from the Avi Controller
@@ -34,16 +45,65 @@
     tenant: "{{ se_tenant }}"
     api_version: "{{ controller_api_version }}"
     http_method: get
-    path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid}}
+    path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid }}
   register: se_authtoken
+  when: se_auth_token is undefined
   delegate_to: localhost
 
-- name: Avi SE | Autoregistration | Append the token to the docker environment variables.
+- name: "Avi SE | Autoregistration | Append the token to the docker environment variables."
   set_fact:
     se_auth_token: "{{ se_authtoken.obj.auth_token }}"
+  when: se_auth_token is undefined
 
 - debug: msg="Recieved Authentication {{ se_auth_token }} from {{ se_master_ctl_ip }}"
 
+- name: Avi SE | Autoregistration | Get a se group uuid from the Avi Controller
+  avi_api_session:
+    controller: "{{ se_master_ctl_ip }}"
+    username: "{{ se_master_ctl_username }}"
+    password: "{{ se_master_ctl_password }}"
+    tenant: "{{ se_tenant }}"
+    api_version: "{{ controller_api_version }}"
+    http_method: get
+    path: serviceenginegroup
+  register: se_group_uuid
+  when: segroup_uuid is undefined
+  delegate_to: localhost
+
+- name: Set cloud uuid
+  set_fact:
+    cloud_uuid: "{{ se_cloud_data.obj.results[0].uuid }}"
+  when: cloud_uuid is undefined
+
+- name: Set se group uuid
+  set_fact:
+    segroup_uuid: "{{ se_group_uuid.obj.results[0].uuid }}"
+  when: segroup_uuid is undefined
+
+- name: Check se_docker.tgz exit or not
+  stat:
+      path: "{{ se_package_source }}"
+  register: file_details
+
+- debug:
+    msg: "Se_docker.tgz exist"
+  when: file_details.stat.exists == True
+
+- name: Generate se_docker.tgz
+  shell: sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"  'echo "{{ se_master_ctl_password }}" | sudo -S python /opt/avi/bootstrap/generate_se_docker.py'
+  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
+
+- name: Copy Generated se_docker.tgz to tmp
+  shell: sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}" 'echo "{{ se_master_ctl_password }}" | sudo -S cp /opt/avi/se_ova/se_docker.tgz /tmp'
+  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
+
+- name: Copy se_docker.tgz file from controller
+  shell: sshpass -p "{{ se_master_ctl_password }}" scp "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}":/tmp/se_docker.tgz "{{ se_package_source }}"
+  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
+
+- name: Load docker image
+  shell: "docker load -i {{ se_package_source }}" 
+  when: file_details.stat.exists == True
 
 - name: Checks for blocking SE creation
   include: block_se.yml

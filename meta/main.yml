@@ -29,5 +29,3 @@ galaxy_info:
     - centos
     - ubuntu
     - mesos
-dependencies:
-  - { role: avinetworks.avisdk }

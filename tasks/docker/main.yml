@@ -1,62 +1,7 @@
 ---
-- name: Avi SE | Check minimum requirements
-  include: se_requirements.yml
+# This task will appropriately start the actions on SE's
+- include: version_check.yml
+  when: se_action != "verify"
 
-- name: Avi SE | Perform specific os tasks
-  include_tasks: os/{{ ansible_distribution|lower }}.yml
-
-- name: Avi SE | Perform specific os family tasks
-  include_tasks: family/{{ ansible_os_family|lower }}.yml
-
-- name: Avi SE | Include OS specific variables
-  include_vars: os/{{ ansible_distribution|lower }}.yml
-
-- name: Avi SE | Perform specific os family tasks
-  include_vars: family/{{ ansible_os_family|lower }}.yml
-
-# We must do this step first just in case we need to override defaults from the supplied package
-- name: Avi SE | Docker | Package Deploy
-  include: package_deploy.yml
-  when: se_package_deploy
-
-- name: Avi SE | Docker | Check if specified image already exists.
-  shell: "docker images -q {{ se_image }}"
-  changed_when: false
-  register: se_docker_match
-
-- block:
-    - name: Avi SE | Docker | Docker Hub
-      include: docker_hub.yml
-      when: se_docker_repo == None
-    - name: Avi SE | Docker | Custom Repo
-      include: custom_repo.yml
-      when: se_docker_repo != None
-  when: not se_package_deploy
-
-# This section must go after se_package_deploy, as se_version is extracted from the output
-- name: Avi SE | Docker | Service | Set service fact for deploy
-  set_fact:
-    se_old_service: "{{ se_version|version_compare('17.3.0', '<') or se_version == 'latest' }}"
-    se_new_service: "{{ se_version|version_compare('17.3.0', '>=') and se_version != 'latest' }}"
-
-- name: Avi SE | Install DPDK
-  include: dpdk.yml
-  when: se_dpdk
-
-- name: Avi SE | Docker | Services | Service checks
-  include: services/check.yml
-
-- name: Avi SE | Perform Autoregistration
-  include: ../autoregistration.yml
-  when: ( se_autoregister and se_service_exists is not defined ) or se_fresh_install
-
-- name: Avi SE | Docker | Services | Append the token to the docker environment variables.
-  set_fact:
-    se_env_variables_all: "{{ se_env_variables_all }} + ['AVICOOKIE={{ se_auth_token }}']"
-  when: se_auth_token is defined
-
-- name: Avi SE | Docker | Cleanup
-  include: services/cleanup.yml
-
-- name: Avi SE | Install the Avi SE service
-  include: services/install.yml
+- name: Avi SE actions
+  include: "se_{{ se_action }}.yml"

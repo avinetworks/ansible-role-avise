@@ -1,5 +1,21 @@
 ---
-- name: Avi SE | Services | upstart | Deploy the avise service
-  copy: src=upstart/avise.conf dest=/etc/init/avise.conf mode=0644
-  register: avise_service
-  notify: Avi SE | Services | Restart the avise service
+- block:
+  - name: Avi SE | Services | init.d | 17.x | Deploy the avise service
+    copy: src=init/avise dest=/etc/init.d/avise mode=0755
+    notify: Avi SE | Services | init.d | Restart the avise_watcher service
+  - name: Avi SE | Services | init.d | Deploy the avise_watcher.sh script
+    copy: src=init/avise_watcher.sh dest=/etc/init.d/avise_watcher.sh mode=0755
+  - name: Avi SE | Services | init.d | Deploy the avise_watcher service
+    copy: src=init/avise_watcher dest=/etc/init.d/avise_watcher mode=0755
+    notify: Avi SE | Services | init.d | Restart the avise_watcher service
+  - name: Avi SE | Services | init.d | Deploying avise_watcher rc links
+    file: src=/etc/init.d/avise_watcher dest={{ item }} state=link
+    with_items:
+      - /etc/rc0.d/K99avise_watcher
+      - /etc/rc1.d/K99avise_watcher
+      - /etc/rc2.d/S99avise_watcher
+      - /etc/rc3.d/S99avise_watcher
+      - /etc/rc4.d/S99avise_watcher
+      - /etc/rc5.d/S99avise_watcher
+      - /etc/rc6.d/K99avise_watcher
+  become: true

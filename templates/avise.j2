@@ -1,89 +1,84 @@
 #!/bin/bash
 ## Usage: avise [options] ARG1
-## Description: This script manages and provides manage of the Avi SE service.
-## Author: Eric Anderson <support@avinetworks.com>
+## Description: This script manages and provides manage of the Avi SE services.
 
-
-if [ -f /etc/default/avise ]; then
-  . /etc/default/avise
-elif [ -f /etc/sysconfig/avise ]; then
-  . /etc/sysconfig/avise
-else
-  echo "Failed to start: missing defaults"
-  exit 1
-fi
+# Set common variables
+container=avise
+service_desc="Avi SE"
+docker_exec=/usr/bin/docker
+logfile="/var/log/${container}.log"
+cidfile="/var/run/${container}.cid"
+image_name="avinetworks/se"
+se_pid=`docker inspect $container | grep '\"Pid\"' | awk '{print $2}' | sed s/,//`
+stop_var="fstrim /proc/$se_pid/root"
+se_docker_run_params="{{ se_docker_run_params }}"
 
 write_log() {
-  echo $1 2>&1 | tee -a ${AVISE_LOGFILE}
+  echo $1 2>&1 | tee -a ${logfile}
 }
 
 container_running() {
-  docker ps -f name=avise | grep -q avise
+  docker ps -f name=${container} | grep -q ${container}
 }
 
 container_exists() {
-  docker ps -a -f name=avise | grep -q avise
+  docker ps -a -f name=${container} | grep -q ${container}
 }
 
 start_container() {
-  write_log "[`date`] Starting the avise container"
-  /usr/bin/docker run ${AVISE_DOCKER_RUN_PARAMS}
+  write_log "[`date`] Starting the ${container} container"
+  /usr/bin/docker run ${se_docker_run_params}
   if [ $? -eq 0 ]; then
-    write_log "[`date`] Service avise running..."
+    write_log "[`date`] Service ${container} running..."
   else
-    write_log "[`date`] Failed to start the avise container"
+    write_log "[`date`] Failed to start the ${container} container"
     exit 1
   fi
 }
 
 stop_container() {
-  /usr/bin/docker stop -t 60 avise
+  /usr/bin/docker exec -t ${container} systemctl stop se_shutdown
+  /usr/bin/docker stop -t 10 ${container}
   if [ $? -eq 0 ]; then
-    write_log "[`date`] Stopped the avise container"
+    write_log "[`date`] Stopped the ${container} container"
   else
     exit 1
   fi
 }
 
 remove_container() {
-  write_log "[`date`] Removing existing avise container"
-  /usr/bin/docker rm -f avise
+  write_log "[`date`] Removing existing ${container} container"
+  /usr/bin/docker rm -f ${container}
   if [ $? -eq 0 ]; then
-    write_log "[`date`] Removed existing avise container"
+    write_log "[`date`] Removed existing ${container} container"
   else
-    write_log "[`date`] Failed to remove existing avise container"
+    write_log "[`date`] Failed to remove existing ${container} container"
   fi
 }
 
 prestart() {
-  # Clean up any running or existing avicontroller containers
-  write_log "[`date`] Performing avise pre-start step."
-  if container_running && container_exists; then
-    write_log "[`date`] Service avise is already running."
-  elif ! container_running && container_exists; then
-    write_log "[`date`] Container avise already exists, but not running. This can be caused by an
-      improper shutdown, or service crash. Performing cleanup"
-    remove_container
-    {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
-    start_container
-  else
-    {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
-    start_container
-  fi
+  write_log "[`date`] Performing ${container} pre-start step."
+  remove_container
+  iptables -w 30 -N avi_tmp || true
+  iptables -w 30 -X avi_tmp || true
+  {% if se_dpdk %}{{ se_dpdk_pre }}{% endif %}
+  start_container
 }
 
 start() {
   prestart
-  /usr/bin/docker wait avise
+  /usr/bin/docker wait ${container}
 }
 
 stop() {
   # Stopping the docker process if running
+  ${stop_var}
+  write_log "[`date`] Freed the blocks of ${se_pid}..."
   if container_running; then
-    write_log "[`date`] Service avise stopping..."
+    write_log "[`date`] Service ${container} stopping..."
     stop_container
   else
-    write_log "[`date`] Service avise already stopped"
+    write_log "[`date`] Service ${container} already stopped"
   fi
   poststop
 }
@@ -106,9 +101,9 @@ reload() {
 
 status() {
   if container_running; then
-    echo "avise running..."
+    echo "${container} running..."
   else
-    echo "avise stopped"
+    echo "${container} stopped"
   fi
 }
 

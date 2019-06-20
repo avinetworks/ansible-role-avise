@@ -23,7 +23,10 @@
     ignore_errors: yes
   - set_fact:
       se_existing_run_params: "{{ out.stdout }}"
-    when: out.stdout is defined and res.stdout is defined and res.stdout != ""
+    when:
+      - out.stdout is defined
+      - res.stdout is defined
+      - res.stdout
   when: se_service_file.stat.exists
 
 - block:

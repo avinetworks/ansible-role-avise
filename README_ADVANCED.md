@@ -5,11 +5,11 @@ This readme covers the advanced features of this role. These notes are for advan
 ## Role Variables
 
 ### Parameter Override Variables
+
 However, you are able to provide these parameters another way. Using the following variables. This will allow the user to customize all values.  
 **!!!BEWARE: USING THIS WILL ERASE DEFAULTS - USE WITH CAUTION!!!**
 
-```
-
+```yaml
 se_env_variables_all:
   - "CONTAINER_NAME=avise"
   - "CONTROLLERIP=10.10.27.101""

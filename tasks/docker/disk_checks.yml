@@ -85,13 +85,18 @@
   - set_fact:
       se_used_sysdisk: "{{ temp.stdout }}"
     when: check_dir.rc == 0
-  when: u_sysdisk_mount.stdout is defined and se_disk_mount.stdout is defined and u_sysdisk_mount.stdout == se_disk_mount.stdout
+  when:
+    - u_sysdisk_mount.stdout is defined
+    - se_disk_mount.stdout is defined
+    - u_sysdisk_mount.stdout == se_disk_mount.stdout
   become: true
   ignore_errors: true
 
 - block:
   - set_fact:
-      error_string: "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int }} GB of disk is not sufficient on {{ se_dest_disk }}, required disk size is {{ se_disk_gb }} GB"
+      error_string: >-
+        {{ se_disk_path_space.stdout|int + se_used_sysdisk|int }} GB of disk is
+        not sufficient on {{ se_dest_disk }}, required disk size is {{ se_disk_gb }} GB
   - include: error.yml
   when: se_dest_disk and se_dest_disk|string and (se_disk_path_space.stdout|int + se_used_sysdisk|int) < se_disk_gb|int
 
@@ -131,7 +136,9 @@
 
 - block:
   - set_fact:
-      error_string: "{{ se_logs_disk_path_space.stdout|int + se_used_logsdisk|int }} GB of disk is not sufficient on {{ se_destination_log_disk }}, required disk size is {{ se_logs_disk_gb }} GB"
+      error_string: >-
+        {{ se_logs_disk_path_space.stdout|int + se_used_logsdisk|int }} GB of disk is not sufficient
+        on {{ se_destination_log_disk }}, required disk size is {{ se_logs_disk_gb }} GB
   - include: error.yml
   when: se_destination_log_disk and se_destination_log_disk|string and (se_logs_disk_path_space.stdout|int + se_used_logsdisk|int) < se_logs_disk_gb|int
 
@@ -143,9 +150,15 @@
 
 - block:
   - set_fact:
-      error_string: "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int }} GB of disk is not sufficient, which is mounted on {{ se_disk_mount.stdout }}, required disk size is {{ se_disk_gb|int + se_logs_disk_gb|int }} GB"
+      error_string: >-
+        {{ se_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int }} GB of disk is not sufficient,
+        which is mounted on {{ se_disk_mount.stdout }}, required disk size is {{ se_disk_gb|int + se_logs_disk_gb|int }} GB
   - include: error.yml
-  when: se_destination_log_disk and se_destination_log_disk|string and se_disk_mount.stdout == se_log_mount.stdout and (se_logs_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int) < se_logs_disk_gb|int + se_disk_gb|int
+  when:
+    - se_destination_log_disk
+    - se_destination_log_disk|string
+    - se_disk_mount.stdout == se_log_mount.stdout
+    - (se_logs_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int) < se_logs_disk_gb|int + se_disk_gb|int
 
 - name: Set log disk path
   set_fact:

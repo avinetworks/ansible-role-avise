@@ -1,6 +1,7 @@
 ---
 - block:
-  - set_fact:
+  - name: Check for version
+    set_fact:
       error_string: "{{ ansible_distribution }} {{ ansible_distribution_version }} is not supported in dpdk mode"
   - include: error.yml
   when:  (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.4.*'))) and
@@ -31,7 +32,7 @@
 
 - name: Avi SE | Perform specific os tasks
   include: os/{{ ansible_distribution|lower }}.yml
-    
+
 - name: Configure DPDK Pre Parameters
   set_fact:
     se_dpdk_pre: >
@@ -41,5 +42,5 @@
 - name: Configure DPDK Post Parameters
   set_fact:
     se_dpdk_post: >
-      rmmod igb_uio; 
+      rmmod igb_uio;
       rmmod rte_kni; umount /mnt/huge

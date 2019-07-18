@@ -1,7 +1,11 @@
 ---
 - block:
-  - shell: "echo {{ error_string }} > /tmp/log"
-  - fetch: src=/tmp/log dest=/tmp/log
-  - file: path=/tmp/log state=absent
-  - fail: msg="{{ error_string }}"
+  - name: Printing error message from log file
+    shell: "echo {{ error_string }} > /tmp/log"
+  - name: fetching log from tmp
+    fetch: src=/tmp/log dest=/tmp/log
+  - name: Delete log file from tmp
+    file: path=/tmp/log state=absent
+  - name: Set error message
+    fail: msg="{{ error_string }}"
   become: true

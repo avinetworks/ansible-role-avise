@@ -1,6 +1,7 @@
 ---
 - block:
-  - set_fact:
+  - name: Check for version
+    set_fact:
       error_string: "{{ ansible_distribution }} {{ ansible_distribution_version }} is not supported for creating ServiceEngine"
   - include: error.yml
   when:  (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.4.*'))) and

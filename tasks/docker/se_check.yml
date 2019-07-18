@@ -3,7 +3,7 @@
   include: check_cloud.yml
 
 - name: Check if Avi SE is running in systemd
-  command: systemctl status avise
+  command: "systemctl status avise"
   when: ansible_service_mgr == "systemd"
   register: result
   failed_when: result.rc > 0
@@ -11,7 +11,7 @@
   become: true
 
 - name: Check if Avi SE is running in non-systemd
-  command: service avise_watcher status
+  command: "service avise_watcher status"
   when: ansible_service_mgr != "systemd"
   register: result
   failed_when: result.rc > 0

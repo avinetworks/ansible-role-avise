@@ -1,109 +1,6 @@
 ---
-
-- name: Avi SE | Autoregistration | Get Controller information
-  uri:
-    url: "https://{{ se_master_ctl_ip }}/api/initial-data"
-    validate_certs: no
-  register: controller_initial_data
-  delegate_to: localhost
-
-- name: Avi SE | Autoregistration | Set Controller version information
-  set_fact:
-    controller_api_version: "{{ controller_initial_data.json.version.Version }}"
-  when: controller_initial_data
-
-- debug: msg="You are running Controller verison {{ controller_api_version }}"
-
-- name: Avi SE | Autoregistration | Set se_version
-  set_fact:
-    se_version: "{{ controller_initial_data.json.version.Tag }}"
-  when: se_version is undefined
-
-- name: Avi SE | Set SE Image Name
-  set_fact:
-    se_image: "avinetworks/se:{{ se_version }}"
-  when: se_version is defined
-
-- name: Avi SE | Autoregistration | Get the cloud uuid from se_cloud_name
-  avi_api_session:
-    controller: "{{ se_master_ctl_ip }}"
-    username: "{{ se_master_ctl_username }}"
-    password: "{{ se_master_ctl_password }}"
-    tenant: "{{ se_tenant }}"
-    api_version: "{{ controller_api_version }}"
-    http_method: get
-    path: "cloud?name={{ se_cloud_name }}"
-  register: se_cloud_data
-  when: cloud_uuid is undefined
-  delegate_to: localhost
-
-- name: Avi SE | Autoregistration | Get a token from the Avi Controller
-  avi_api_session:
-    controller: "{{ se_master_ctl_ip }}"
-    username: "{{ se_master_ctl_username }}"
-    password: "{{ se_master_ctl_password }}"
-    tenant: "{{ se_tenant }}"
-    api_version: "{{ controller_api_version }}"
-    http_method: get
-    path: securetoken-generate?cloud_uuid={{ se_cloud_data.obj.results[0].uuid }}
-  register: se_authtoken
-  when: se_auth_token is undefined
-  delegate_to: localhost
-
-- name: "Avi SE | Autoregistration | Append the token to the docker environment variables."
-  set_fact:
-    se_auth_token: "{{ se_authtoken.obj.auth_token }}"
-  when: se_auth_token is undefined
-
-- debug: msg="Recieved Authentication {{ se_auth_token }} from {{ se_master_ctl_ip }}"
-
-- name: Avi SE | Autoregistration | Get a se group uuid from the Avi Controller
-  avi_api_session:
-    controller: "{{ se_master_ctl_ip }}"
-    username: "{{ se_master_ctl_username }}"
-    password: "{{ se_master_ctl_password }}"
-    tenant: "{{ se_tenant }}"
-    api_version: "{{ controller_api_version }}"
-    http_method: get
-    path: serviceenginegroup
-  register: se_group_uuid
-  when: segroup_uuid is undefined
-  delegate_to: localhost
-
-- name: Set cloud uuid
-  set_fact:
-    cloud_uuid: "{{ se_cloud_data.obj.results[0].uuid }}"
-  when: cloud_uuid is undefined
-
-- name: Set se group uuid
-  set_fact:
-    segroup_uuid: "{{ se_group_uuid.obj.results[0].uuid }}"
-  when: segroup_uuid is undefined
-
-- name: Check se_docker.tgz exit or not
-  stat:
-      path: "{{ se_package_source }}"
-  register: file_details
-
-- debug:
-    msg: "Se_docker.tgz exist"
-  when: file_details.stat.exists == True
-
-- name: Generate se_docker.tgz
-  shell: sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"  'echo "{{ se_master_ctl_password }}" | sudo -S python /opt/avi/bootstrap/generate_se_docker.py'
-  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
-
-- name: Copy Generated se_docker.tgz to tmp
-  shell: sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}" 'echo "{{ se_master_ctl_password }}" | sudo -S cp /opt/avi/se_ova/se_docker.tgz /tmp'
-  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
-
-- name: Copy se_docker.tgz file from controller
-  shell: sshpass -p "{{ se_master_ctl_password }}" scp "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}":/tmp/se_docker.tgz "{{ se_package_source }}"
-  when: (file_details.stat.exists == False) and (se_master_ctl_password is defined)
-
-- name: Load docker image
-  shell: "docker load -i {{ se_package_source }}" 
-  when: file_details.stat.exists == True
+- name: Avi SE | Perform Autoregistration
+  include: autoregistration.yml
 
 - name: Checks for blocking SE creation
   include: block_se.yml
@@ -115,7 +12,7 @@
     se_cores: "{{ s_cores }}"
     se_dest_disk: "{{ se_destination_disk }}"
     se_memory_gb: "{{ s_memory_gb }}"
-    docker_size_req: "{{ 5 * 1024 * 1024}}"
+    docker_size_req: "{{ 5 * 1024 * 1024 }}"
     se_used_sysdisk: "{{ 0 }}"
     se_used_logsdisk: "{{ 0 }}"
 
@@ -176,49 +73,66 @@
   when: (se_cores|int == 0) or (se_cores|int > se_max_cores|int)
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ se_ansible_memtotal_gb|float - 2 }}"
-  - set_fact:
+
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 120) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ se_ansible_memtotal_gb|float - 1 }}"
-  - set_fact:
+
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 64) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 512) / 1024 }}"
-  - set_fact:
+
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 32) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 256) / 1024 }}"
-  - set_fact:
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 8) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 64) / 1024 }}"
-  - set_fact:
+
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 4) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - set_fact:
+  - name: Set se memory in gb
+    set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 32) / 1024 }}"
-  - set_fact:
+
+  - name: set se reset to 1 if it is undefined
+    set_fact:
       se_reset: 1
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 2) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - name: Set se memory if all
-  set_fact: 
+  set_fact:
     se_memory_gb: "{{ se_ansible_memtotal_gb }}"
   when: (se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float)
 
@@ -228,29 +142,37 @@
   changed_when: false
   become: true
 
-- block: 
-  - name: if avicontroller present, set facts for cpu and memory
+- block:
+  - name: if avicontroller present, get value for cpu
     shell: "docker exec avicontroller env | grep NUM_CPU | wc -l"
     register: c_cpu
-  - shell: "docker exec avicontroller env | grep NUM_CPU | sed -e 's/=/ /g' | awk '{print $2}'"
+  - name: if avicontroller present, get value for memory
+    shell: "docker exec avicontroller env | grep NUM_CPU | sed -e 's/=/ /g' | awk '{print $2}'"
     register: temp
     when: c_cpu.stdout|int == 1
-  - set_fact: 
+  - name: Set cpu for controller
+    set_fact:
       controller_cpu: "{{ temp.stdout }}"
-  - shell: "docker exec avicontroller env | grep NUM_MEMG | wc -l"
+  - name: "Please update name"
+    shell: "docker exec avicontroller env | grep NUM_MEMG | wc -l"
     register: c_mem
-  - shell: "docker exec avicontroller env | grep NUM_MEMG | sed -e 's/=/ /g' | awk '{print $2}'"
+  - name: "Please update name"
+    shell: "docker exec avicontroller env | grep NUM_MEMG | sed -e 's/=/ /g' | awk '{print $2}'"
     register: temp
     when: c_mem.stdout|int == 1
-  - set_fact: 
+  - name: Set controller memory
+    set_fact:
       controller_mem: "{{ temp.stdout }}"
-  - set_fact:
-      se_cores: "{{ se_max_cores|int - controller_cpu|int }}" 
+  - name: Set cores
+    set_fact:
+      se_cores: "{{ se_max_cores|int - controller_cpu|int }}"
     when: (se_cores|int + controller_cpu|int) > se_max_cores|int
-  - assert:
-      that: 
+  - name: check se cores greater than 0
+    assert:
+      that:
         - "se_cores|int > 0"
-  - set_fact:
+  - name: Set memory in gb
+    set_fact:
       se_memory_gb: "{{ se_ansible_memtotal_gb|float - controller_mem|int }}"
     when: (se_memory_gb|int + controller_mem|int) > se_ansible_memtotal_gb|float
   when: result.stdout|int == 1
@@ -261,21 +183,26 @@
     se_cores: "{{ se_cores|int / ansible_processor_threads_per_core }}"
   when: (s_cores|int == 0) and (ansible_processor_threads_per_core > 1)
 
-- set_fact:
+- name: Set se cores
+  set_fact:
     se_cores: 128
   when: se_cores|int > 128
 
-- set_fact:
+- name: Set se memory in gb if greater that 256
+  set_fact:
     se_memory_gb: 256
   when: se_memory_gb|int > 256
 
-- set_fact:
+- name: Set se memory in gb
+  set_fact:
     se_memory_mb: "{{ se_memory_gb|float * 1024 }}"
 
 - block:
-  - set_fact:
+  - name: Set error message
+    set_fact:
       error_string: "ServiceEngine needs minimum 1GB per core, available cores {{ se_cores }} and available memory {{ se_memory_gb }} GB"
-  - include: error.yml
+  - name: Include error.yml file
+    include: error.yml
   when: se_memory_gb|int < se_cores|int
 
 - name: Validate Parameters
@@ -294,11 +221,12 @@
   register: res
   ignore_errors: yes
 
-- set_fact:
+- name: Set cpu constraint
+  set_fact:
     cpu_constraint: "--cpu-period=100000 --cpu-quota={{ se_cores|int * 100000 }}"
   when: (res.rc is defined ) and (res.rc == 0)
 
-- block: 
+- block:
   - name: Clean directories for service engine
     file: path="{{ item }}" state=absent
     when: item != None
@@ -329,7 +257,8 @@
     ignore_errors: yes
   when: ns_res.rc is defined and ns_res.rc == 0
 
-- set_fact:
+- name: Set failed port
+  set_fact:
     failed_port: "{{ item.item }}"
   when: item.rc is defined and item.rc == 0 and error is undefined
   with_items:

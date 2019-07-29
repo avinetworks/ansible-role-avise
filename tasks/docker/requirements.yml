@@ -73,7 +73,7 @@
   when: (se_cores|int == 0) or (se_cores|int > se_max_cores|int)
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ se_ansible_memtotal_gb|float - 2 }}"
 
@@ -83,7 +83,7 @@
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 120) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ se_ansible_memtotal_gb|float - 1 }}"
 
@@ -93,7 +93,7 @@
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 64) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 512) / 1024 }}"
 
@@ -103,7 +103,7 @@
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 32) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 256) / 1024 }}"
   - name: set se reset to 1 if it is undefined
@@ -112,7 +112,7 @@
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 8) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 64) / 1024 }}"
 
@@ -122,7 +122,7 @@
   when: (se_reset is undefined) and (se_ansible_memtotal_gb|float > 4) and ((se_memory_gb|int == 0) or (se_memory_gb|int > se_ansible_memtotal_gb|float))
 
 - block:
-  - name: Set se memory in gb
+  - name: Set se memory in GB
     set_fact:
       se_ansible_memtotal_gb: "{{ (se_ansible_memtotal_gb|float * 1024 - 32) / 1024 }}"
 
@@ -193,7 +193,7 @@
     se_memory_gb: 256
   when: se_memory_gb|int > 256
 
-- name: Set se memory in gb
+- name: Set se memory in GB
   set_fact:
     se_memory_mb: "{{ se_memory_gb|float * 1024 }}"
 

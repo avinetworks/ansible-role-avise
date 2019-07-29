@@ -9,23 +9,23 @@
   - name: avise present, set values for used disks info
     shell: docker inspect avise | grep ":/vol/"
     register: check_dir
-  - name: "Please update name"
+  - name: Read system disk path
     shell: docker inspect avise | grep ":/vol/" | cut -d ':' -f 1 | sed s/\"//g
     register: u_sysdisk_path
     when: check_dir.rc == 0
-  - name: "Please update name"
+  - name: Get mount point for system disk
     shell: "df {{ u_sysdisk_path.stdout }} -P | tail -n +2 | awk '{print $NF}'"
     register: u_sysdisk_mount
     when: check_dir.rc == 0 and u_sysdisk_path.stdout is defined
 
-  - name: "Please update name"
+  - name: Read logs directory
     shell: docker inspect avise | grep ":/vol_logs/"
     register: check_dir
-  - name: "Please update name"
+  - name: Read logs disk path
     shell: docker inspect avise | grep ":/vol_logs/" | cut -d ':' -f 1 | sed s/\"//g
     register: u_logdisk_path
     when: check_dir.rc == 0
-  - name: "Please update name"
+  - name: Get mount point for logs disk
     shell: "df {{ u_logdisk_path.stdout }} -P | tail -n +2 | awk '{print $NF}'"
     register: u_logdisk_mount
     when: check_dir.rc == 0 and u_logdisk_path.stdout is defined
@@ -34,7 +34,7 @@
   ignore_errors: true
 
 - block:
-  - name: "Please update name"
+  - name: Get default largest disk for loading SE system partition
     shell: "df -lTP | tail -n +2 | egrep -v 'tmpfs|overlay' | sort -k 5,5 -nr | awk 'NR==1{print $NF}'"
     register: result
   - name: "Set se destination disk"

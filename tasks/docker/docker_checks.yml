@@ -72,7 +72,7 @@
   become: true
 
 - block:
-  - name: "Please update name"
+  - name: Get docker disk available size
     shell: "df {{ docker_disk_dir }} -P | grep -iv Used | awk '{print $4}'"
     register: size_avail
   - name: Set docker size

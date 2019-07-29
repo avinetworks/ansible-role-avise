@@ -153,10 +153,10 @@
   - name: Set cpu for controller
     set_fact:
       controller_cpu: "{{ temp.stdout }}"
-  - name: "Please update name"
+  - name: check existense of NUM_MEMG env variable inside controller
     shell: "docker exec avicontroller env | grep NUM_MEMG | wc -l"
     register: c_mem
-  - name: "Please update name"
+  - name: Get controller memory
     shell: "docker exec avicontroller env | grep NUM_MEMG | sed -e 's/=/ /g' | awk '{print $2}'"
     register: temp
     when: c_mem.stdout|int == 1

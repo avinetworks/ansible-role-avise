@@ -3,7 +3,7 @@
   include: check_cloud.yml
   when: se_action == "cleanup"
 
-- block: 
+- block:
   - name: Avi SE | Docker | Cleanup | Stop avise_watcher service
     service: name=avise_watcher enabled=no state=stopped
   - name: remove avise file
@@ -29,7 +29,7 @@
   ignore_errors: yes
   become: true
 
-- block: 
+- block:
   - name: Cleanup avise service
     service: name=avise enabled=no state=stopped
   - name: remove avise file
@@ -41,12 +41,12 @@
   ignore_errors: yes
   become: true
 
-- block: 
+- block:
   - name: Get list of running se containers
-    shell: "docker ps -q -f name=avise"
+    command: "docker ps -q -f name=avise"
     changed_when: false
     register: se_running_containers
-  - name: Stop and Remove the containers 
+  - name: Stop and Remove the containers
     shell: "docker stop {{ item }} && docker rm -f {{ item }}"
     with_items:
       - "{{ se_running_containers.stdout_lines }}"
@@ -55,20 +55,21 @@
     changed_when: false
     register: docker_images
     when: se_action == "cleanup"
-  - name: remove the images 
-    shell: "docker rmi -f {{ item }}"
+  - name: remove the images
+    command: "docker rmi -f {{ item }}"
     with_items:
       - "{{ docker_images.stdout_lines }}"
     when: se_action == "cleanup"
   become: true
 
 - block:
-  - name:  Clean up other files 
+  - name: Clean up other files
     file: path={{ se_package_dest }} state=absent
     ignore_errors: yes
   become: true
 
-- file: path="{{ item.split(':') | map('regex_search','(.*)opt/avi/se/(.*)') | select('string') | first }}" state=absent
+- name: Clean up se files
+  file: path="{{ item.split(':') | map('regex_search','(.*)opt/avi/se/(.*)') | select('string') | first }}" state=absent
   with_items:
     - "{{ se_existing_run_params.split() | map('regex_search','(.*)opt/avi/se/(.*)') | select('string') | list }}"
   when: se_existing_run_params is defined and se_existing_ver is defined and se_existing_ver == se_version

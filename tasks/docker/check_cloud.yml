@@ -19,7 +19,9 @@
     set_fact:
       error_string: "Cannot create ServiceEngine since it is running on Cloud '{{ cname.stdout }}' on Controller '{{ cip.stdout }}'"
   - include: error.yml
-  when: se_service_file.stat.exists and c_uuid.stdout is defined and cname.stdout is defined and cip.stdout is defined and c_uuid.stdout|string != cloud_uuid|string
+  when: >
+    se_service_file.stat.exists and c_uuid.stdout is defined and cname.stdout is defined and cip.stdout is defined
+    and c_uuid.stdout|string != cloud_uuid|string
 
 - name: Read existing SE version
   set_fact:

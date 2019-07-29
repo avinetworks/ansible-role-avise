@@ -33,6 +33,7 @@ Using this module you are able to install the Avi Vantage Service Engine, to you
 | `se_master_ctl_password` | No | `None` | The passowrd to login into the controller api. <br>**Not required when `se_autoregister: false`** |
 | `se_cloud_name` | No | `Default-Cloud` | Name of cloud the SE should auto-register with. |
 | `se_tenant` | No | `admin` | Name of se_tenant the SE should auto-register with. |
+| `segroup_uuid` | No | `None` | Uuid of segroup_uuid the SE should auto-register with. |
 
 ### Package Deploy Variables
 | Variable | Required | Default | Comments |

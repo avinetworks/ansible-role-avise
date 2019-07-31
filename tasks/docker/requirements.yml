@@ -1,6 +1,7 @@
 ---
 - name: Avi SE | Perform Autoregistration
   include: autoregistration.yml
+  when: not lsc_mode
 
 - name: Checks for blocking SE creation
   include: block_se.yml

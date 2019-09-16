@@ -68,7 +68,7 @@
     set_fact:
       docker_disk_dir: "{{ docker_dir.stdout }}"
     when: docker_dir.stdout
-  when: zdocker_disk_dir is not defined
+  when: docker_disk_dir is not defined
   become: true
 
 - block:
@@ -78,7 +78,7 @@
   - name: Set docker size
     set_fact:
       docker_size_avail: "{{ size_avail.stdout }}"
-  when: docker_disk_dir
+  when: docker_disk_dir is defined
   become: true
 
 - block:

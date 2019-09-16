@@ -24,7 +24,7 @@
   - name: set se existing run params
     set_fact:
       se_existing_run_params: "{{ out.stdout }}"
-    when: out.stdout and res.stdout
+    when: out.stdout is defined and res.stdout is defined
   when: se_service_file.stat.exists
 
 - block:
@@ -38,5 +38,5 @@
   - name: set se existing run params
     set_fact:
       se_existing_run_params: "{{ out.stdout }}"
-    when: out.stdout
+    when: out.stdout is defined
   when: se_existing_run_params is not defined

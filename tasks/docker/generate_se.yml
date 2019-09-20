@@ -1,6 +1,0 @@
----
-- name: Copy Generated se_docker.tgz to tmp
-  shell: sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}" 'echo "{{ se_master_ctl_password }}" | sudo -S cp /opt/avi/se_ova/se_docker.tgz /tmp'
-
-- name: Copy se_docker.tgz file from controller
-  shell: sshpass -p "{{ se_master_ctl_password }}" scp "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}":/tmp/se_docker.tgz "{{ se_package_source }}"

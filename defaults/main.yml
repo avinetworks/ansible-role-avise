@@ -5,7 +5,7 @@
 se_deploy_type: docker
 se_action: start
 se_force: true
-
+lsc_mode: false
 # standard parameters
 se_skip_requirements: false
 

@@ -3,6 +3,11 @@
   include: autoregistration.yml
   when: not lsc_mode
 
+- name: Avi SE | Set SE Image Name
+  set_fact:
+    se_image: "avinetworks/se:{{ se_version }}"
+  when: se_version is defined
+
 - name: Checks for blocking SE creation
   include: block_se.yml
 

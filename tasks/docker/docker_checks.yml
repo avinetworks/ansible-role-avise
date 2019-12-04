@@ -45,7 +45,7 @@
   - name: Set docker disk directory
     set_fact:
       docker_disk_dir: "{{ docker_dir.stdout }}"
-    when: docker_dir.stdout
+    when: docker_dir.stdout != ""
   when: docker_disk_dir is not defined
   become: true
 
@@ -56,7 +56,7 @@
   - name: Set docker disk directory
     set_fact:
       docker_disk_dir: "{{ docker_dir.stdout }}"
-    when: docker_dir.stdout
+    when: docker_dir.stdout != ""
   when: docker_disk_dir is not defined
   become: true
 
@@ -67,7 +67,7 @@
   - name: Set docker disk directory
     set_fact:
       docker_disk_dir: "{{ docker_dir.stdout }}"
-    when: docker_dir.stdout
+    when: docker_dir.stdout != ""
   when: docker_disk_dir is not defined
   become: true
 

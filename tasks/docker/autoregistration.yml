@@ -29,7 +29,7 @@
 - name: Avi SE | Autoregistration | Set se_version
   set_fact:
     se_version: "{{ controller_initial_data.json.version.Tag }}"
-  when: se_version is undefined
+  when: se_version is undefined or se_version == "latest"
 
 - name: Avi SE | Set SE Image Name
   set_fact:

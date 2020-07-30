@@ -3,7 +3,7 @@
 - name: Avi SE | Services | systemd | Daemon reload
   systemd: daemon_reload=yes name=avise
   become: true
-  when: ansible_version is version('2.2', '>=')
+  when: ansible_version.full is version('2.2', '>=')
 
 - name: Avi SE | Services | Restart the avise service
   service: name=avise enabled=yes state=restarted

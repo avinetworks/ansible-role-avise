@@ -12,6 +12,8 @@
          (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.5.*'))) and
          (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.6.*'))) and
          (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.7.*'))) and
+         (not (ansible_distribution == 'CentOS' and ansible_distribution_version is match('7.8.*'))) and
+         (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('7.8'))) and
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('7.7'))) and
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('7.6'))) and
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('7.5'))) and
@@ -23,6 +25,7 @@
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('6.9'))) and
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('6.7'))) and
          (not (ansible_distribution == 'OracleLinux' and ansible_distribution_version is match('6.5'))) and
+         (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.8'))) and
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.7'))) and
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.6'))) and
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.5'))) and

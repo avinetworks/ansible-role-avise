@@ -41,7 +41,7 @@ env:
       MOLECULE_COMMAND: /lib/systemd/systemd
 
 install:
-  - pip install molecule docker molecule-docker
+  - pip install molecule docker molecule-docker flake8
 
 before_script:
   - cd ../

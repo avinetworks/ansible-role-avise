@@ -114,7 +114,7 @@
     - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller
       shell: >
         sshpass -p "{{ se_master_ctl_password }}" ssh -t -o ConnectTimeout=54000 "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
-        'echo "{{ se_master_ctl_password }}" | sudo -S python /opt/avi/bootstrap/generate_se_docker.py'
+        'echo "{{ se_master_ctl_password }}" | sudo -S python3 /opt/avi/bootstrap/generate_se_docker.py'
       when: (file_exist.stdout == "0") and (se_master_ctl_password is defined) and controller_api_version < "18.2.6"
 
     - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller

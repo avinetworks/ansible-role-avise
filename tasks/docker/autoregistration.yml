@@ -94,42 +94,42 @@
 
 - name: Avi SE | Check se_docker.tgz exit or not
   stat:
-      path: "{{ se_package_source }}"
+    path: "{{ se_package_source }}"
   register: file_details
 
 - debug:
-      msg: "Se_docker.tgz exist"
+    msg: "Se_docker.tgz exist"
   when: file_details.stat.exists
 
 - block:
-  - debug:
-        msg: "se_docker.tgz doesn't exist"
+    - debug:
+      msg: "se_docker.tgz doesn't exist"
 
-  - name: Avi SE | Check se_docker.tgz is exist or not on the controller
-    shell: >
-      sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
-      'echo "{{ se_master_ctl_password }}" | sudo -S ls -1 "{{ se_image_path }}" | grep se_docker.tgz | wc -l'
-    register: file_exist
+    - name: Avi SE | Check se_docker.tgz is exist or not on the controller
+      shell: >
+        sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
+        'echo "{{ se_master_ctl_password }}" | sudo -S ls -1 "{{ se_image_path }}" | grep se_docker.tgz | wc -l'
+      register: file_exist
 
-  - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller
-    shell: >
-      sshpass -p "{{ se_master_ctl_password }}" ssh -t -o ConnectTimeout=54000 "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
-      'echo "{{ se_master_ctl_password }}" | sudo -S python3 /opt/avi/bootstrap/generate_se_docker.py'
-    when: (file_exist.stdout == "0") and (se_master_ctl_password is defined) and controller_api_version < "18.2.6"
+    - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller
+      shell: >
+        sshpass -p "{{ se_master_ctl_password }}" ssh -t -o ConnectTimeout=54000 "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
+        'echo "{{ se_master_ctl_password }}" | sudo -S python /opt/avi/bootstrap/generate_se_docker.py'
+      when: (file_exist.stdout == "0") and (se_master_ctl_password is defined) and controller_api_version < "18.2.6"
 
-  - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller
-    shell: >
-      sshpass -p "{{ se_master_ctl_password }}" ssh -t -o ConnectTimeout=54000 "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
-      'echo "{{ se_master_ctl_password }}" | sudo -S python3 /opt/avi/bootstrap/generate_se_docker.py -sdp "{{ se_image_path }}" -sd "{{ se_image_path }}"'
-    when: (file_exist.stdout == "0") and (se_master_ctl_password is defined) and controller_api_version >= "18.2.6"
+    - name: Avi SE | Autoregistration | Generate se_docker.tgz on the controller
+      shell: >
+        sshpass -p "{{ se_master_ctl_password }}" ssh -t -o ConnectTimeout=54000 "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
+        'echo "{{ se_master_ctl_password }}" | sudo -S python /opt/avi/bootstrap/generate_se_docker.py -sdp "{{ se_image_path }}" -sd "{{ se_image_path }}"'
+      when: (file_exist.stdout == "0") and (se_master_ctl_password is defined) and controller_api_version >= "18.2.6"
 
-  - name: Avi SE | Copy Generated se_docker.tgz to tmp
-    shell: >
-      sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
-      'echo "{{ se_master_ctl_password }}" | sudo -S cp "{{ se_image_path }}/se_docker.tgz" /tmp'
+    - name: Avi SE | Copy Generated se_docker.tgz to tmp
+      shell: >
+        sshpass -p "{{ se_master_ctl_password }}" ssh -t "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}"
+        'echo "{{ se_master_ctl_password }}" | sudo -S cp "{{ se_image_path }}/se_docker.tgz" /tmp'
 
-  - name: Avi SE | Copy se_docker.tgz file from controller
-    shell: >
-      sshpass -p "{{ se_master_ctl_password }}" scp "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}":/tmp/se_docker.tgz
-      "{{ se_package_source }}"
-  when: (not file_details.stat.exists) and (se_master_ctl_password is defined)
+    - name: Avi SE | Copy se_docker.tgz file from controller
+      shell: >
+        sshpass -p "{{ se_master_ctl_password }}" scp "{{ se_master_ctl_username }}"@"{{ se_master_ctl_ip }}":/tmp/se_docker.tgz
+        "{{ se_package_source }}"
+      when: (not file_details.stat.exists) and (se_master_ctl_password is defined)

@@ -14,29 +14,29 @@
   register: se_service_file
 
 - block:
-  - name: Read existing service's docker run configuration < 17.2.x
-    shell: "cat {{ service_file }} | sed -n -e 's/^.*docker run //p'"
-    register: out
-  - name: check for existance of cloud uuid
-    shell: "echo {{ out.stdout }} | grep CLOUD_UUID="
-    register: res
-    ignore_errors: yes
-  - name: set se existing run params
-    set_fact:
-      se_existing_run_params: "{{ out.stdout }}"
-    when: out.stdout is defined and res.stdout is defined and res.stdout != ""
+    - name: Read existing service's docker run configuration < 17.2.x
+      shell: "cat {{ service_file }} | sed -n -e 's/^.*docker run //p'"
+      register: out
+    - name: check for existance of cloud uuid
+      shell: "echo {{ out.stdout }} | grep CLOUD_UUID="
+      register: res
+      ignore_errors: yes
+    - name: set se existing run params
+      set_fact:
+        se_existing_run_params: "{{ out.stdout }}"
+      when: out.stdout is defined and res.stdout is defined and res.stdout != ""
   when: se_service_file.stat.exists
 
 - block:
-  - name: Check for existing docker run params file for 17.2.x
-    stat: path=/usr/sbin/avise
-    register: param_file
-  - name: Read docker run params
-    shell: cat /usr/sbin/avise | sed -n -e 's/^se_docker_run_params=//p' | tr -d '"'
-    register: out
-    when: param_file.stat.exists
-  - name: set se existing run params
-    set_fact:
-      se_existing_run_params: "{{ out.stdout }}"
-    when: out.stdout is defined
-  when: se_existing_run_params is not defined
+    - name: Check for existing docker run params file for 17.2.x
+      stat: path=/usr/sbin/avise
+      register: param_file
+    - name: Read docker run params
+      shell: cat /usr/sbin/avise | sed -n -e 's/^se_docker_run_params=//p' | tr -d '"'
+      register: out
+      when: param_file.stat.exists
+    - name: set se existing run params
+      set_fact:
+        se_existing_run_params: "{{ out.stdout }}"
+        when: out.stdout is defined
+      when: se_existing_run_params is not defined

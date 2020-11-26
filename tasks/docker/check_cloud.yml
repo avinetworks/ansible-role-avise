@@ -25,5 +25,5 @@
 
 - name: Read existing SE version
   set_fact:
-      se_existing_ver: "{{ se_existing_run_params.split(':') | last }}"
+    se_existing_ver: "{{ se_existing_run_params.split(':') | last }}"
   when: se_existing_run_params is defined

@@ -1,5 +1,5 @@
 ---
-- name:  Check if avise present on host
+- name: Check if avise present on host
   shell: "docker ps | grep avise | wc -l"
   register: present
   changed_when: false
@@ -59,12 +59,12 @@
   when: se_dest_disk and se_dest_disk|string
 
 - block:
-  - name: Set error message
-    set_fact:
-      error_string: "Directory path {{ se_dest_disk }} specified for system logs does not exist"
-  - name: Include error.yml
-    include: error.yml
-  when: se_dest_disk and se_dest_disk|string  and (not st.stat.exists or not st.stat.isdir)
+    - name: Set error message
+      set_fact:
+        error_string: "Directory path {{ se_dest_disk }} specified for system logs does not exist"
+    - name: Include error.yml
+      include: error.yml
+      when: se_dest_disk and se_dest_disk|string  and (not st.stat.exists or not st.stat.isdir)
 
 - name: "Check {{ se_destination_log_disk }} status"
   stat:
@@ -73,56 +73,56 @@
   when: se_destination_log_disk and se_destination_log_disk|string
 
 - block:
-  - name: Set error message
-    set_fact:
-      error_string: "Directory path {{ se_destination_log_disk }} specified for client logs does not exist"
-  - name: Include error.yml
-    include: error.yml
-  when: se_destination_log_disk and se_destination_log_disk|string and (not st.stat.exists or not st.stat.isdir)
+    - name: Set error message
+      set_fact:
+        error_string: "Directory path {{ se_destination_log_disk }} specified for client logs does not exist"
+    - name: Include error.yml
+      include: error.yml
+      when: se_destination_log_disk and se_destination_log_disk|string and (not st.stat.exists or not st.stat.isdir)
 
 - block:
-  - name: Get mount point for sys disk
-    shell: "df {{ se_dest_disk }} -P | tail -n +2 | awk '{print $NF}'"
-    changed_when: false
-    register: se_disk_mount
-  - name: Get disk space on service engine disk path
-    shell: "df {{ se_disk_mount.stdout }} -BG -P | grep -iv Used | awk '{print $4}' | sed s/G//g"
-    changed_when: false
-    register: se_disk_path_space
-  when: se_dest_disk and se_dest_disk|string
+    - name: Get mount point for sys disk
+      shell: "df {{ se_dest_disk }} -P | tail -n +2 | awk '{print $NF}'"
+      changed_when: false
+      register: se_disk_mount
+    - name: Get disk space on service engine disk path
+      shell: "df {{ se_disk_mount.stdout }} -BG -P | grep -iv Used | awk '{print $4}' | sed s/G//g"
+      changed_when: false
+      register: se_disk_path_space
+      when: se_dest_disk and se_dest_disk|string
 
 - block:
-  - name: Execute docker container
-    command: "docker exec avise du -s -BG /vol/"
-    register: check_dir
-  - name: Execute docker container
-    shell: "docker exec avise du -s -BG /vol/ | awk '{print $1}' | sed s/G//g"
-    register: temp
-    when: check_dir.rc == 0
-  - name: set se_used_sysdisk
-    set_fact:
-      se_used_sysdisk: "{{ temp.stdout }}"
-    when: check_dir.rc == 0
-  when: u_sysdisk_mount.stdout is defined and se_disk_mount.stdout is defined and u_sysdisk_mount.stdout == se_disk_mount.stdout
-  become: true
-  ignore_errors: true
+    - name: Execute docker container
+      command: "docker exec avise du -s -BG /vol/"
+      register: check_dir
+    - name: Execute docker container
+      shell: "docker exec avise du -s -BG /vol/ | awk '{print $1}' | sed s/G//g"
+      register: temp
+      when: check_dir.rc == 0
+    - name: set se_used_sysdisk
+      set_fact:
+        se_used_sysdisk: "{{ temp.stdout }}"
+        when: check_dir.rc == 0
+      when: u_sysdisk_mount.stdout is defined and se_disk_mount.stdout is defined and u_sysdisk_mount.stdout == se_disk_mount.stdout
+      become: true
+      ignore_errors: true
 
 - block:
-  - name: Set error message
-    set_fact:
-      error_string: >
-        "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int }} GB of disk is not sufficient on {{ se_dest_disk }},
-        required disk size is {{ se_disk_gb }} GB"
-  - name: Include error.yml
-    include: error.yml
-  when: se_dest_disk and se_dest_disk|string and (se_disk_path_space.stdout|int + se_used_sysdisk|int) < se_disk_gb|int
+    - name: Set error message
+      set_fact:
+        error_string: >
+          "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int }} GB of disk is not sufficient on {{ se_dest_disk }},
+          required disk size is {{ se_disk_gb }} GB"
+    - name: Include error.yml
+      include: error.yml
+      when: se_dest_disk and se_dest_disk|string and (se_disk_path_space.stdout|int + se_used_sysdisk|int) < se_disk_gb|int
 
 - block:
-  - name: check se disk in gb is greater than 0
-    assert:
-      that:
-        - "se_disk_gb > 0"
-  when: se_dest_disk and se_dest_disk|string
+    - name: check se disk in gb is greater than 0
+      assert:
+        that:
+          - "se_disk_gb > 0"
+      when: se_dest_disk and se_dest_disk|string
 
 - name: Set sys disk path
   set_fact:
@@ -130,61 +130,61 @@
   when: se_dest_disk and se_dest_disk|string
 
 - block:
-  - name: Get mount point for log disk
-    shell: "df {{ se_destination_log_disk }} -P | tail -n +2 | awk '{print $NF}'"
-    changed_when: false
-    register: se_log_mount
-  - name: Get disk space on service engine logs disk path
-    shell: "df {{ se_log_mount.stdout }} -BG -P | grep -iv Used | awk '{print $4}' | sed s/G//g"
-    register: se_logs_disk_path_space
-  when: se_destination_log_disk and se_destination_log_disk|string
+    - name: Get mount point for log disk
+      shell: "df {{ se_destination_log_disk }} -P | tail -n +2 | awk '{print $NF}'"
+      changed_when: false
+      register: se_log_mount
+    - name: Get disk space on service engine logs disk path
+      shell: "df {{ se_log_mount.stdout }} -BG -P | grep -iv Used | awk '{print $4}' | sed s/G//g"
+      register: se_logs_disk_path_space
+      when: se_destination_log_disk and se_destination_log_disk|string
 
 - block:
-  - name: Execute dokcer container
-    command: "docker exec avise du -s -BG /vol_logs/"
-    register: check_dir
-  - name: Execute dokcer container
-    shell: "docker exec avise du -s -BG /vol_logs/ | awk '{print $1}' | sed s/G//g"
-    register: temp
-    when: check_dir.rc == 0
-  - name: set se used logsdisk
-    set_fact:
-      se_used_logsdisk: "{{ temp.stdout }}"
-    when: check_dir.rc == 0
-  when: u_logdisk_mount.stdout is defined and se_log_mount.stdout is defined and u_logdisk_mount.stdout == se_log_mount.stdout
-  become: true
-  ignore_errors: true
+    - name: Execute dokcer container
+      command: "docker exec avise du -s -BG /vol_logs/"
+      register: check_dir
+    - name: Execute dokcer container
+      shell: "docker exec avise du -s -BG /vol_logs/ | awk '{print $1}' | sed s/G//g"
+      register: temp
+      when: check_dir.rc == 0
+    - name: set se used logsdisk
+      set_fact:
+        se_used_logsdisk: "{{ temp.stdout }}"
+        when: check_dir.rc == 0
+      when: u_logdisk_mount.stdout is defined and se_log_mount.stdout is defined and u_logdisk_mount.stdout == se_log_mount.stdout
+      become: true
+      ignore_errors: true
 
 - block:
-  - name: Set error message
-    set_fact:
-      error_string: >
-        "{{ se_logs_disk_path_space.stdout|int + se_used_logsdisk|int }} GB of disk is not sufficient on
-        {{ se_destination_log_disk }}, required disk size is {{ se_logs_disk_gb }} GB"
-  - name: Include error.yml
-    include: error.yml
-  when: >
-    se_destination_log_disk and se_destination_log_disk|string and
-    (se_logs_disk_path_space.stdout|int + se_used_logsdisk|int) < se_logs_disk_gb|int
+    - name: Set error message
+      set_fact:
+        error_string: >
+          "{{ se_logs_disk_path_space.stdout|int + se_used_logsdisk|int }} GB of disk is not sufficient on
+          {{ se_destination_log_disk }}, required disk size is {{ se_logs_disk_gb }} GB"
+    - name: Include error.yml
+      include: error.yml
+      when: >
+        se_destination_log_disk and se_destination_log_disk|string and
+        (se_logs_disk_path_space.stdout|int + se_used_logsdisk|int) < se_logs_disk_gb|int
 
 - block:
-  - name: Check se_logs_disk_gb is greater that 0
-    assert:
-      that:
-        - "se_logs_disk_gb > 0"
-  when: se_destination_log_disk and se_destination_log_disk|string
+    - name: Check se_logs_disk_gb is greater that 0
+      assert:
+        that:
+          - "se_logs_disk_gb > 0"
+      when: se_destination_log_disk and se_destination_log_disk|string
 
 - block:
-  - name: Set error message
-    set_fact:
-      error_string: >
-        "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int }} GB of disk is not sufficient,
-          which is mounted on {{ se_disk_mount.stdout }}, required disk size is {{ se_disk_gb|int + se_logs_disk_gb|int }} GB"
-  - name: Include error.yml
-    include: error.yml
-  when: >
-    se_destination_log_disk and se_destination_log_disk|string and se_disk_mount.stdout == se_log_mount.stdout
-    and (se_logs_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int) < se_logs_disk_gb|int + se_disk_gb|int
+    - name: Set error message
+      set_fact:
+        error_string: >
+          "{{ se_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int }} GB of disk is not sufficient,
+            which is mounted on {{ se_disk_mount.stdout }}, required disk size is {{ se_disk_gb|int + se_logs_disk_gb|int }} GB"
+    - name: Include error.yml
+      include: error.yml
+      when: >
+        se_destination_log_disk and se_destination_log_disk|string and se_disk_mount.stdout == se_log_mount.stdout
+        and (se_logs_disk_path_space.stdout|int + se_used_sysdisk|int + se_used_logsdisk|int) < se_logs_disk_gb|int + se_disk_gb|int
 
 - name: Set log disk path
   set_fact:

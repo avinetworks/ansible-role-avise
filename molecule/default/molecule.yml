@@ -3,10 +3,14 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: molecule/default/.yamllint
+lint: |
+  set -e
+  yamllint tasks -c molecule/default/.yamllint
+  ansible-lint molecule/default/converge.yml
+  flake8
+#  name: yamllint
+#  options:
+#    config-file: molecule/default/.yamllint
 platforms:
   - name: ${MOLECULE_DISTRO:-ubuntu_bionic}
     image: ${MOLECULE_DISTRO:-ubuntu:bionic}
@@ -17,17 +21,13 @@ platforms:
     command: ${MOLECULE_COMMAND:-"/lib/systemd/systemd"}
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
-    options:
-      x:
-        - ANSIBLE0006
-        - ANSIBLE0010
+#  lint: |
+#    ansible-lint
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
 scenario:
   name: default
 verifier:
   name: testinfra
-  lint:
-    name: flake8
+#  lint:
+#    name: flake8

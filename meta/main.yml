@@ -18,6 +18,7 @@ galaxy_info:
         - precise
         - trusty
         - xenial
+        - focal
   galaxy_tags:
     - avi
     - serviceengine

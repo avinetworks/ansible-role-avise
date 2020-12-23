@@ -1,0 +1,12 @@
+[Unit]
+Description=Avi SE Service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+
+ExecStart= /bin/bash /usr/sbin/avise start
+ExecStop= /bin/bash /usr/sbin/avise stop
+
+[Install]
+WantedBy=multi-user.target

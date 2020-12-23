@@ -5,11 +5,12 @@
 # Set common variables
 container=avise
 service_desc="Avi SE"
+cont_plat="{{ 'podman' if (ansible_distribution == 'RedHat' and ansible_distribution_major_version is match('8')) else 'docker' }}"
 docker_exec=/usr/bin/docker
 logfile="/var/log/${container}.log"
 cidfile="/var/run/${container}.cid"
 image_name="avinetworks/se"
-se_pid=`docker inspect $container | grep '\"Pid\"' | awk '{print $2}' | sed s/,//`
+se_pid=`${cont_plat} inspect $container | grep '\"Pid\"' | awk '{print $2}' | sed s/,//`
 stop_var="fstrim /proc/$se_pid/root"
 se_docker_run_params="{{ se_docker_run_params }}"
 
@@ -18,16 +19,16 @@ write_log() {
 }
 
 container_running() {
-  docker ps -f name=${container} | grep -q ${container}
+  ${cont_plat} ps -f name=${container} | grep -q ${container}
 }
 
 container_exists() {
-  docker ps -a -f name=${container} | grep -q ${container}
+  ${cont_plat} ps -a -f name=${container} | grep -q ${container}
 }
 
 start_container() {
   write_log "[`date`] Starting the ${container} container"
-  /usr/bin/docker run ${se_docker_run_params}
+  /usr/bin/${cont_plat} run ${se_docker_run_params}
   if [ $? -eq 0 ]; then
     write_log "[`date`] Service ${container} running..."
   else
@@ -37,8 +38,8 @@ start_container() {
 }
 
 stop_container() {
-  /usr/bin/docker exec -t ${container} systemctl stop se_shutdown
-  /usr/bin/docker stop -t 10 ${container}
+  /usr/bin/${cont_plat} exec -t ${container} systemctl stop se_shutdown
+  /usr/bin/${cont_plat} stop -t 10 ${container}
   if [ $? -eq 0 ]; then
     write_log "[`date`] Stopped the ${container} container"
   else
@@ -48,7 +49,7 @@ stop_container() {
 
 remove_container() {
   write_log "[`date`] Removing existing ${container} container"
-  /usr/bin/docker rm -f ${container}
+  /usr/bin/${cont_plat} rm -f ${container}
   if [ $? -eq 0 ]; then
     write_log "[`date`] Removed existing ${container} container"
   else
@@ -67,11 +68,11 @@ prestart() {
 
 start() {
   prestart
-  /usr/bin/docker wait ${container}
+  /usr/bin/${cont_plat} wait ${container}
 }
 
 stop() {
-  # Stopping the docker process if running
+  # Stopping the docker/podman process if running
   ${stop_var}
   write_log "[`date`] Freed the blocks of ${se_pid}..."
   if container_running; then

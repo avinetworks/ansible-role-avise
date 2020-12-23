@@ -64,9 +64,9 @@ se_mounts_default:
   - "/:/hostroot/"
   - "/etc/hostname:/etc/host_hostname"
   - "/etc/localtime:/etc/localtime"
-  - "/var/run/docker.sock:/var/run/docker.sock"
   - "{{ (se_disk_path == None) | ternary('', se_disk_path ~ ':/vol/') }}"
   - "{{ (se_logs_disk_path == None) | ternary('', se_logs_disk_path ~ ':/vol_logs/') }}"
+  - "{{ (se_deploy_type == 'podman') | ternary('/run/podman/io.podman:/var/run/docker.sock', '/var/run/docker.sock:/var/run/docker.sock') }}"
 se_mounts_all: "{{ se_mounts_extras + se_mounts_default}}"
 se_mounts_string: "{% for mount_var in se_mounts_all|reject('match', '^$') %} -v {{ mount_var }}{% endfor %}"
 

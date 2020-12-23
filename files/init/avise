@@ -9,7 +9,7 @@
 
 ### BEGIN INIT INFO
 # Provides:       avise
-# Required-Start: docker
+# Required-Start: docker/podman
 # Required-Stop:
 # Should-Start:
 # Should-Stop:

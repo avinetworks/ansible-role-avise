@@ -1,7 +1,7 @@
 ---
 - name: systemd | Deploy the avise service
   copy:
-    src: systemd/avise.service
+    src: "systemd/avise_{{ se_deploy_type }}.service"
     dest: /etc/systemd/system/avise.service
     mode: 0644
   become: true

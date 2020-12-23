@@ -30,43 +30,43 @@
   become: true
 
 - block:
-    - name: Cleanup avise service
-      service: name=avise enabled=no state=stopped
-    - name: remove avise file
-      file: path=/usr/sbin/avise state=absent
-    - name: remove service file
-      file: path=/etc/systemd/system/avise.service state=absent
+  - name: Cleanup avise service
+    service: name=avise enabled=no state=stopped
+  - name: remove avise file
+    file: path=/usr/sbin/avise state=absent
+  - name: remove service file
+    file: path=/etc/systemd/system/avise.service state=absent
   when:
     - ansible_service_mgr == "systemd"
   ignore_errors: yes
   become: true
 
 - block:
-    - name: Get list of running se containers
-      command: "docker ps -q -f name=avise"
-      changed_when: false
-      register: se_running_containers
-    - name: Stop and Remove the containers
-      shell: "docker stop {{ item }} && docker rm -f {{ item }}"
-      with_items:
-        - "{{ se_running_containers.stdout_lines }}"
-    - name: Get list of docker images
-      shell: "docker images | grep avinetworks/se | grep {{ se_version }} | awk '{print $3}'"
-      changed_when: false
-      register: docker_images
-      when: se_action == "cleanup"
-    - name: remove the images
-      command: "docker rmi -f {{ item }}"
-      with_items:
-        - "{{ docker_images.stdout_lines }}"
-      when: se_action == "cleanup"
+  - name: Get list of running se containers
+    command: "{{ se_deploy_type }} ps -q -f name=avise"
+    changed_when: false
+    register: se_running_containers
+  - name: Stop and Remove the containers
+    shell: "{{ se_deploy_type }} stop {{ item }} && {{ se_deploy_type }} rm -f {{ item }}"
+    with_items:
+      - "{{ se_running_containers.stdout_lines }}"
+  - name: Get list of docker images
+    shell: "{{ se_deploy_type }} images | grep avinetworks/se | grep {{ se_version }} | awk '{print $3}'"
+    changed_when: false
+    register: docker_images
+    when: se_action == "cleanup"
+  - name: remove the images
+    command: "{{ se_deploy_type }} rmi -f {{ item }}"
+    with_items:
+      - "{{ docker_images.stdout_lines }}"
+    when: se_action == "cleanup"
   become: true
 
 - block:
-    - name: Clean up other files
-      file: path={{ se_package_dest }} state=absent
-      ignore_errors: yes
-      become: true
+  - name: Clean up other files
+    file: path={{ se_package_dest }} state=absent
+    ignore_errors: yes
+  become: true
 
 - name: Clean up se files
   file: path="{{ item.split(':') | map('regex_search','(.*)opt/avi/se/(.*)') | select('string') | first }}" state=absent

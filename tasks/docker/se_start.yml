@@ -16,6 +16,18 @@
   when: se_docker_match.stdout|int != 1
   become: true
 
+- block:
+  - name: Enable Podman Socket
+    command: "systemctl enable io.podman.socket"
+  when: se_deploy_type == "podman"
+  become: true
+
+- block:
+  - name: Start Podman Socket
+    command: "systemctl start io.podman.socket"
+  when: se_deploy_type == "podman"
+  become: true
+
 - name: Avi SE | Install DPDK
   include: dpdk.yml
   when: se_dpdk

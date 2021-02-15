@@ -1,0 +1,48 @@
+---
+- block:
+  - name: Check Cpuset installed
+    command: cset --version
+    register: csetres
+    failed_when: csetres.rc > 0
+    changed_when: false
+  - name: Check Taskset installed
+    command: taskset --version
+    register: tsres
+    failed_when: tsres.rc > 0
+    changed_when: false
+  become: true
+  when: se_dp_isolation|bool
+
+- name: Cleanup avihost service
+  service: name=avihost enabled=no state=stopped
+  become: true
+  ignore_errors: yes
+  when: se_dp_isolation|bool
+
+- name: Copy Avi Host script to remote machine
+  copy:
+    src: "/opt/avi/scripts/avi_host_server.py"
+    dest: /usr/sbin/avi_host_server.py
+    mode: 0755
+  become: true
+  ignore_errors: yes
+
+- name: systemd | Deploy the avihost service
+  copy:
+    src: "systemd/avihost.service"
+    dest: /etc/systemd/system/avihost.service
+    mode: 0644
+  become: true
+  ignore_errors: yes
+
+- name: Avi Host | Services | systemd | Daemon reload
+  systemd: daemon_reload=yes name=avihost
+  become: true
+  ignore_errors: yes
+  when: se_dp_isolation|bool
+
+- name: Avi Host | Services | Start the avihost service
+  service: name=avihost enabled=yes state=started
+  become: true
+  ignore_errors: yes
+  when: se_dp_isolation|bool

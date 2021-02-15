@@ -42,6 +42,17 @@
   become: true
 
 - block:
+  - name: Cleanup avihost service
+    service: name=avihost enabled=no state=stopped
+  - name: remove avihost server file
+    file: path=/usr/sbin/avi_host_server.py state=absent
+  - name: remove service file
+    file: path=/etc/systemd/system/avihost.service state=absent
+  when: ansible_service_mgr == "systemd" and se_action == "cleanup"
+  ignore_errors: yes
+  become: true
+
+- block:
   - name: Get list of running se containers
     command: "{{ se_deploy_type }} ps -q -f name=avise"
     changed_when: false

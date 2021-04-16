@@ -46,6 +46,8 @@
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.2'))) and
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.1'))) and
          (not (ansible_distribution == 'RedHat' and ansible_distribution_version is match('7.0'))) and
+         (not (ansible_distribution == 'Ubuntu' and ansible_distribution_version is match('20.04'))) and
+         (not (ansible_distribution == 'Ubuntu' and ansible_distribution_version is match('18.04'))) and
          (not (ansible_distribution == 'Ubuntu' and ansible_distribution_version is match('16.04')))
 
 - name: Avi SE | Perform specific os tasks

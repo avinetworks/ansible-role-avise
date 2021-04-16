@@ -5,8 +5,8 @@ Description=Avi Host Service
 TimeoutStartSec=0
 Restart=always
 
-ExecStart=/usr/sbin/avi_host_server.py
-ExecStop=pkill -f avi_host_server.py
+ExecStart=/bin/sh -c "python3 /usr/sbin/avi_host_server.py"
+ExecStop=/bin/sh -c "pkill -f avi_host_server.py"
 
 [Install]
 WantedBy=multi-user.target

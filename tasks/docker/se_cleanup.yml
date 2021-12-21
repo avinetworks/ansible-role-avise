@@ -48,6 +48,8 @@
     file: path=/usr/sbin/avi_host_server.py state=absent
   - name: remove service file
     file: path=/etc/systemd/system/avihost.service state=absent
+  - name: remove service script file
+    file: path=/etc/systemd/system/avihost_service_script.sh state=absent
   when: ansible_service_mgr == "systemd" and se_action == "cleanup"
   ignore_errors: yes
   become: true

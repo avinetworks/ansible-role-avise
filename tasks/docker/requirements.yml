@@ -28,10 +28,6 @@
 - name: Include disk checks
   include: disk_checks.yml
 
-- name: Include disk checks
-  include: avihost.yml
-  when: ansible_service_mgr == "systemd"
-
 - block:
   - name: Check if AVI SE is running in systemd
     command: systemctl status avise
@@ -284,3 +280,7 @@
       when: proc_res.stdout is defined
     - include: error.yml
   when: failed_port is defined
+
+- name: Avi Host service checks
+  include: avihost.yml
+  when: ansible_service_mgr == "systemd"

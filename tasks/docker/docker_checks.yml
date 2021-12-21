@@ -36,7 +36,15 @@
       error_string: "Docker version {{ result.stdout }} not supported for spawning ServiceEngine container, please upgrade docker to 1.6.1 or greater"
   - name: Include error.yml
     include: error.yml
-  when: result.stdout is version('1.6.1', '<')
+  when: result.stdout is version('1.6.1', '<') and se_deploy_type == "docker"
+
+- block:
+  - name: Set error message if Podman version is less than 3.0.1
+    set_fact:
+      error_string: "Podman version {{ result.stdout }} not supported for spawning ServiceEngine container, please upgrade podman to 3.0.1 or greater"
+  - name: Include error.yml
+    include: error.yml
+  when: result.stdout is version('3.0.1', '<') and se_deploy_type == "podman"
 
 - block:
   - name: Verify the docker storage

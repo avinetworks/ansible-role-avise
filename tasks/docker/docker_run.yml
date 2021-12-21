@@ -37,7 +37,7 @@
     stat: path=/usr/sbin/avise
     register: param_file
   - name: Read docker run params
-    shell: cat /usr/sbin/avise | sed -n -e 's/^se_docker_run_params=//p' | tr -d '"'
+    shell: cat /usr/sbin/avise | sed -n -e 's/^\s*se_docker_run_params=//p' | tr -d '"'
     register: out
     when: param_file.stat.exists
   - name: set se existing run params

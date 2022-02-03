@@ -18,13 +18,13 @@
 
 - block:
   - name: Enable Podman Socket
-    command: "systemctl enable podman.socket"
+    command: "systemctl enable io.podman.socket"
   when: se_deploy_type == "podman"
   become: true
 
 - block:
   - name: Start Podman Socket
-    command: "systemctl start podman.socket"
+    command: "systemctl start io.podman.socket"
   when: se_deploy_type == "podman"
   become: true
 

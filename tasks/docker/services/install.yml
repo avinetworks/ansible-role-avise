@@ -5,7 +5,7 @@
   when: ansible_service_mgr != "systemd"
 
 - name: Copy template to remote machine
-  template: src="{{ se_service_files_path }}avise.j2" dest=/usr/sbin/avise mode=0755
+  template: src=avise.j2 dest=/usr/sbin/avise mode=0755
   become: true
   notify: Avi SE | Services | Restart the avise service
 

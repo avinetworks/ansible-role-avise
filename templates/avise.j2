@@ -208,7 +208,8 @@ case "$1" in
     else
       wait_till_service_starts ${cont_plat}
     fi
-    se_docker_run_params="{{ AVI_RUN_PARAMS }}"
+# AV-135987 - Don't indent, causing regex parsing issue in controller
+se_docker_run_params="{{ AVI_RUN_PARAMS }}"
     $1
     ;;
   *)

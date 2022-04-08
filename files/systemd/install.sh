@@ -1,10 +1,10 @@
-
 #!/bin/bash
 ############################################################################
-# ------------------------------------------------------------------------
-# Copyright 2021 VMware, Inc.  All rights reserved. VMware Confidential
-# ------------------------------------------------------------------------
+# ========================================================================
+# Copyright 2022 VMware, Inc.  All rights reserved. VMware Confidential
+# ========================================================================
 ###
+
 set -e
 echo "Migrating avihost service files."
 major_version=`cat /bootstrap/VERSION | grep Version | awk '{print $2}' | awk '{split($0,a,".");}{print a[1]}'`

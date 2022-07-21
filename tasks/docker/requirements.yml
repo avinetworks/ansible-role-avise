@@ -43,9 +43,9 @@
   - name: SE is already running, exiting
     set_fact:
       error_string: "running"
-    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force|bool)
+    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force)
   - include: error.yml
-    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force|bool)
+    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force)
   when: ansible_service_mgr == "systemd"
   become: true
 
@@ -64,9 +64,9 @@
   - name: SE is already running, exiting
     set_fact:
       error_string: "running"
-    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force|bool)
+    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force)
   - include: error.yml
-    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force|bool)
+    when: (output.stdout is defined) and (output.stdout == "1") and (not se_force)
   when: ansible_service_mgr != "systemd"
   become: true
 

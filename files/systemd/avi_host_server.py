@@ -4,7 +4,6 @@
 # ========================================================================
 ###
 
-
 """
 What is the service functionality?
 > To accept a command as string on Unix Domain Socket and respond with out, err and return code
